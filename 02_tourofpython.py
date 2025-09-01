@@ -177,6 +177,7 @@ int(alphabet)  # Ger ValueError
 
 '''
 
+'''
 print(int(True))  # 1
 
 int(False)  # 0
@@ -186,3 +187,52 @@ bool(7)  # True
 bool(0)  # False
 
 bool(None)  # False
+
+'''
+
+#Data structures
+
+'''
+list1 = [] #Empty list
+list1 = list() #Another way to create an empty list
+list2 = [1,2,3] # List which contains three integers
+print(type(list2))
+
+print(list2[1])
+
+list2[1] = 8 # Nu innehåller listan [1, 8, 3]
+
+#list2[4] #Index error
+
+var1 = 3.14
+var2 = 'my string'
+
+list3 = [1, 3.14, 'Prolog', 'myString']
+print(list3)
+print(type(list3))
+
+#Slices
+
+list3[1:3]  # [3.14, 'Prolog']
+list3[1:3] = [2.72, 'Perl', 'Python'] # Replaces two elements with three new ones and list extends
+print(list3)  # [1, 2.72, 'Perl', 'Python', 'my string']
+
+#List of lists
+
+list4 = [list2, list3]
+# [[1, 8, 3], [1, 2.72, 'Perl', 'Python', 'my string']]
+print(list4)
+
+list4[0][1]  # 8
+
+list4[1][3]  # 'Python'
+print(list4[1][3])  # 'Python', Så det funkar via att man tar första andra elemtet i vektorn vilket är lista 2 och tar det fjärde elementet i lista2
+
+
+list5 = list2
+[v1, v2, v3] = list5 # Unpacking variables and their values
+print([v1, v2, v3])
+'''
+
+
+# List Copy

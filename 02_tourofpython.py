@@ -168,3 +168,21 @@ print(type(alphabet))  # <class 'str'>
 '''
 
 # Type conversions
+'''
+a = int('12')  # 12
+b = str(12)  # '12'
+c = int('12.0') # Ger oss ERROR
+print(c)  # 12
+int(alphabet)  # Ger ValueError
+
+'''
+
+print(int(True))  # 1
+
+int(False)  # 0
+
+bool(7)  # True
+
+bool(0)  # False
+
+bool(None)  # False

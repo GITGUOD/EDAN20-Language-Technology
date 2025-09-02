@@ -34,7 +34,7 @@
     iliad_opening = "Sing, O goddess, the anger of Achilles son of Peleus, that brought countless ills upon the Achaeans."
     print(iliad_opening)
 '''
-
+iliad_opening = "Sing, O goddess, the anger of Achilles son of Peleus, that brought countless ills upon the Achaeans."
 '''
 alphabet = 'abcdefghijklmnopqrstuvwxyz'
 var1 = alphabet[0]
@@ -331,3 +331,55 @@ print(tuple4)
 '''
 
 # Sets
+
+'''
+set1 = set()  # An empty set
+set2 = {'a', 'b', 'c', 'c', 'b'}  # {'a', 'b', 'c'}
+print(set2) # A set has no duplicates, simply the unique ones
+
+print(type(set2))
+
+set2.add('d')
+print(set2)
+
+set2.remove('a')
+print(set2)
+
+list9 = ['a', 'b', 'c', 'c', 'b']
+set3 = set(list9)  # {'a', 'b', 'c'}
+print(set3)  # A set has no duplicates, simply the unique ones
+
+iliad_chars = set(iliad_opening.lower()) # Set takes the string and divided into characters which then catagorizes unique chars
+# The set of unique characters of the iliad_opening string
+print(iliad_chars)
+
+print(sorted(iliad_chars))
+
+# Operations
+
+newSet = set2.intersection(set3)  # {'c', 'b'} It takes unique character which both sets contains
+# Another way to write it is set2 & set3
+print(newSet)
+
+print(set2.union(set3))
+
+set2 | set3 # OR, ta med båda eller alla
+
+set2.symmetric_difference(set3)  # {'a', 'd'}
+# Det tar unika tecken som finns i antingen set2 eller set3 men inte i båda
+
+
+set2.issubset(set3)  # False
+# Det betyder att set2 inte är en delmängd av set3
+alphabet = 'abcdefghijklmnopqrstuvwxyz'
+print(iliad_chars.intersection(set(alphabet)))
+# characters of the iliad string that are letters:
+# {'a', 's', 'g', 'p', 'u', 'h', 'c', 'l', 'i',
+#  'd', 'o', 'e', 'b', 't', 'f', 'r', 'n'}
+
+#Tar med alla unika characters som både finns i iliad och alfabetet
+
+
+'''
+
+# Dictionaries

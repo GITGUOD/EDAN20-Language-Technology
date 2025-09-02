@@ -383,3 +383,35 @@ print(iliad_chars.intersection(set(alphabet)))
 '''
 
 # Dictionaries
+
+wordcount = {}  # We create an empty dictionary
+wordcount = dict()  # Another way to create a dictionary
+wordcount['a'] = 21  # The key 'a' has value 21
+wordcount['And'] = 10  # 'And' has value 10
+wordcount['the'] = 18
+
+print(wordcount)
+
+print(type(wordcount))
+
+print(wordcount['a'])  # 21
+
+print(wordcount['And'])  # 10
+
+print('And' in wordcount)  # True
+
+# print(wordcount['is'])  # Key error eftersom den inte finns
+
+# Dictionary functions
+
+wordcount.get('And') # 10
+
+wordcount.get('is', 0)  # 0, returns the value zero as it would otherwise return none as is doesnt exist in the directionary. 
+
+from collections import defaultdict
+
+missing_proof = defaultdict(int)
+missing_proof['the']
+
+print(missing_proof['the']) # Here, int is used as the “default factory”. int() with no arguments → 0. So, any missing key will automatically get the value 0.
+# so defaultdict is jjust a dictionary but more freedom to choose defaultvalue?

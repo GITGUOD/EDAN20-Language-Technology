@@ -600,6 +600,7 @@ def count_letters(text: str, lc: bool = True) -> dict[str, int]:
 '''
 # Comprehension and Generators
 
+'''
 word = 'acress'
 splits = [(word[:i], word[i:]) for i in range(len(word) + 1)]
 print(splits)
@@ -650,3 +651,124 @@ print(next(my_iterator))
 
 # zip()
 
+latin_alphabet = 'abcdefghijklmnopqrstuvwxyz'
+len(latin_alphabet)  # 26
+
+greek_alphabet = 'αβγδεζηθικλμνξοπρστυφχψω'
+len(greek_alphabet)  # 24
+
+cyrillic_alphabet = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'
+len(cyrillic_alphabet)  # 33
+
+la_gr = zip(latin_alphabet[:3], greek_alphabet[:3])
+print(la_gr)
+print(list(la_gr))
+print(list(la_gr))  # You can traverse it only once
+
+la_gr_cy = zip(latin_alphabet[:3], greek_alphabet[:3],
+               cyrillic_alphabet[:3])
+print(la_gr_cy)
+
+la_gr = zip(latin_alphabet[:3], greek_alphabet[:3])  # We recreate the iterator
+print(next(la_gr))  # ('a', 'α')
+print(next(la_gr))  # ('a', 'α')
+print(next(la_gr))  # ('a', 'α')
+# print(next(la_gr))  # ('a', 'α') Inget mer och iterera
+
+# We can traverse an iterator only once. To traverse it two or more times, we convert it to a list
+
+la_gr_cy_list = list(la_gr_cy)
+# First time
+
+la_gr_cy_list  # [('a', 'α', 'а'), ('b', 'β', 'б'), ('c', 'γ', 'в')]
+# Second time, etc.
+
+la_gr_cy_list  # [('a', 'α', 'а'), ('b', 'β', 'б'), ('c', 'γ', 'в')]
+list(la_gr_cy)  # []
+
+#Zipping
+
+la_gr_cy = list(zip(latin_alphabet[:3], greek_alphabet[:3],
+                    cyrillic_alphabet[:3]))
+print(la_gr_cy)
+
+te = list(zip(*la_gr_cy))  # [('a', 'b', 'c'), ('α', 'β', 'γ'), ('а', 'б', 'в')]
+print(te)
+
+print(la_gr_cy_list)
+print(list(zip(*la_gr_cy_list)))
+
+# zipping is like building a matrix row by row, and unzipping swaps the row with the column?
+'''
+
+# Modules
+
+#The math module
+
+'''
+import math
+
+math.sqrt(2)  # 1.4142135623730951
+
+math.sin(math.pi / 2)  # 1.0
+
+math.log(8, 2)  # 3.0
+
+print(type(math))
+
+# The statistics module
+
+import statistics as stats
+
+stats.mean([1, 2, 3, 4, 5])  # 3.0 # Average value
+
+stats.stdev([1, 2, 3, 4, 5])  # 1.5811388300841898
+
+#Running the program or importing it
+
+if __name__ == '__main__':
+    print("Running the program")
+    # Other statements
+else:
+    print("Importing the program")
+'''
+
+    # Other statements
+
+#python namnetPåFilen.py
+#så körs filen direkt, och i den filen är:
+
+#python
+#Kopiera kod
+#if __name__ == '__main__':
+#sant (__name__ == "__main__"), så allt inuti den blocken kommer att köras.
+
+#Om du istället importerar filen i en annan fil, t.ex.:
+
+#python
+#Kopiera kod
+#import namnetPåFilen
+#Då sätts __name__ till filens modulnamn ("namnetPåFilen"),
+
+#Och allt inuti if __name__ == '__main__': körs inte.
+
+#Det är alltså ett sätt att skilja mellan:
+
+#När filen körs som huvudprogram
+
+#När filen används som modul / bibliotek i ett annat program
+
+#Dvs: if __name__ == '__main__': kör koden bara när filen körs direkt, men inte när filen importeras som modul i en annan fil.
+
+
+
+# Basic File Input/Output
+
+CORPUS_PATH = '../datasets/classics/'
+try:
+    # We open a file and we get a file object
+    f_iliad = open(CORPUS_PATH + 'iliad.mb.txt', 'r', encoding='utf-8')
+    iliad_txt = f_iliad.read()  # We read all the file
+    f_iliad.close()  # We close the file
+except:
+    iliad_txt = None

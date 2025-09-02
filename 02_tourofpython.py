@@ -763,8 +763,9 @@ else:
 
 
 # Basic File Input/Output
-
 CORPUS_PATH = 'C:\\Users\\tonny\\OneDrive\\Documents\\EDAN20\\EDAN20\\'
+
+'''
 
 def count_letters(text, lc=True):
     letter_count = {}
@@ -815,9 +816,7 @@ for key in classics_url:
 import regex as re
 
 for key in classics:
-    classics[key] = re.search(r'^-+$(.+)^-+$',
-                              classics[key],
-                              re.M | re.S).group(1)
+    classics[key] = re.search(r'^-+$(.+)^-+$', classics[key], re.M | re.S).group(1)
 
 print(classics['iliad'][:50])
 
@@ -835,3 +834,208 @@ with open(CORPUS_PATH + 'classics.json', 'w') as f:
 
 with open(CORPUS_PATH + 'classics.json', 'r') as f:
     classics = json.loads(f.read())
+
+'''
+
+# Decorators and memo-functions
+def memo_function(f):
+    cache = {}
+
+    def memo(x):
+        if x in cache:
+            return cache[x]
+        else:
+            cache[x] = f(x)
+            return cache[x]
+
+    return memo
+
+
+@memo_function
+def fibonacci(n):
+    """
+    Fibonacci with memo function
+    :param n:
+    :return:
+    """
+    if n == 1:
+        return 1
+    elif n == 2:
+        return 1
+    else:
+        return fibonacci(n - 1) + fibonacci(n - 2)
+
+
+f_numbers = {}
+
+
+def fibonacci2(n):
+    """
+    Fibonacci with memoization. Ad hoc implementation
+    :param n:
+    :return:
+    """
+    if n == 1:
+        return 1
+    elif n == 2:
+        return 1
+    elif n in f_numbers:
+        return f_numbers[n]
+    else:
+        f_numbers[n] = fibonacci2(n - 1) + fibonacci2(n - 2)
+        return f_numbers[n]
+
+print(fibonacci(400))
+print(fibonacci2(900))
+
+
+# Classes and objects
+
+class Text:
+    """Text class to hold and process text"""
+
+    alphabet = 'abcdefghijklmnopqrstuvwxyz'
+
+    def __init__(self, text: str = None):
+        """The constructor called when an object
+        is created"""
+
+        self.content = text
+        self.length = len(text)
+        self.letter_counts = {}
+
+    def count_letters(self, lc: bool = True) -> dict[str, int]:
+        """Function to count the letters of a text"""
+
+        letter_counts = {}
+        if lc:
+            text = self.content.lower()
+        else:
+            text = self.content
+        for letter in text:
+            if letter.lower() in self.alphabet:
+                if letter in letter_counts:
+                    letter_counts[letter] += 1
+                else:
+                    letter_counts[letter] = 1
+        self.letter_counts = letter_counts
+        return letter_counts
+    
+# Creating objects and calling methods
+
+txt = Text(iliad_opening)
+print(type(txt))
+
+print(txt.length)
+
+print(txt.count_letters())
+print(txt.count_letters(False))
+
+txt.my_var = 'a'
+# txt.content = classics['iliad']
+print(txt.count_letters())
+print(txt.my_var)
+
+# Subclassing
+class Word(Text):
+    def __init__(self, word: str = None):
+        super().__init__(word)
+        self.part_of_speech = None
+
+    def annotate(self, part_of_speech: str):
+        self.part_of_speech = part_of_speech
+
+print(type(Word))
+
+word = Word('Muse')
+
+print(type(word))
+print(word.length)
+print(word.count_letters(False))
+
+word.annotate('Noun')
+print(word.part_of_speech)
+
+# The Counter Class
+
+from collections import Counter
+
+char_cnts = Counter(iliad_opening)
+
+print(char_cnts)
+
+print(char_cnts.most_common(3))
+
+print(char_cnts.total())
+
+print(char_cnts.keys())
+
+print(char_cnts['z'])
+
+print('z' in char_cnts)
+
+# Functional programming
+
+# map()
+
+odyssey_opening = """Tell me, O Muse, of that many-sided hero who
+traveled far and wide after he had sacked the famous town
+of Troy.""".strip()
+
+print(odyssey_opening)
+
+text_lengths = map(len, [iliad_opening, odyssey_opening])
+list(text_lengths)  # [100, 111]
+print(text_lengths)
+# Map är ett sätt och använda alla element, kanske för att göra de till en lista
+
+def file_length(file: str) -> int:
+    return len(open(file).read())
+
+print(file_length(CORPUS_PATH + 'iliad.txt'))
+
+files = [CORPUS_PATH + 'iliad.txt', CORPUS_PATH + 'odyssey.txt']
+
+text_lengths = map(lambda x: len(open(x).read()), files) # returnerar en iterable med längden på varje text.
+
+
+text_lengths = (
+    map(lambda x: (open(x).read(), len(open(x).read())),
+        files))
+text_lengths = list(text_lengths)
+print([text_lengths[0][1], text_lengths[1][1]])  # [807676, 610676]
+
+# reduce()
+
+import functools
+
+char_count = functools.reduce(
+    lambda x, y: x[1] + y[1],
+    map(lambda x: (x, len(x)),
+        map(lambda x: open(x).read(), files)))
+
+print(char_count)
+
+print(''.join(filter(lambda x: x in 'aeiou', iliad_opening)))
+
+print(''.join(filter(lambda x: x in 'aeiou',
+               open(CORPUS_PATH + 'iliad.txt').read()))[:100])
+
+print(map(lambda y:
+    ''.join(filter(lambda x: x in 'aeiou',
+                   open(y).read())),
+    files))
+
+list(map(len,
+         map(lambda y:
+             ''.join(filter(lambda x: x in 'aeiou',
+                            open(y).read())),
+             files)))
+
+# print(list(map(lambda x: x if x in 'aeiuo' else '', map(lambda x: open(x).read(), files))))
+
+print(list(map(len,
+         map(lambda y:
+             ''.join(filter(lambda x: x in 'aeiou',
+                            open(y).read())),
+             files))))

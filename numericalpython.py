@@ -644,3 +644,343 @@ tensor([[1],
         [2],
         [3]])
 '''
+
+# Broadcasting
+
+# Relative frequencies of the letter counts
+
+iliad_dist = (1/np.sum(iliad_cnt)) * iliad_cnt
+odyssey_dist = (1/np.sum(odyssey_cnt)) * odyssey_cnt
+iliad_cnt / np.sum(iliad_cnt)
+
+'''
+Output:
+
+array([0.081, 0.014, 0.018, 0.045, 0.123, 0.026, 0.02 , 0.08 , 0.061,
+       0.003, 0.007, 0.04 , 0.026, 0.067, 0.081, 0.014, 0.   , 0.058,
+       0.065, 0.086, 0.029, 0.01 , 0.025, 0.001, 0.019, 0.   ])
+'''
+
+odyssey_cnt / np.sum(odyssey_cnt)
+
+'''
+Output:
+array([0.08 , 0.014, 0.018, 0.044, 0.126, 0.022, 0.021, 0.074, 0.061,
+       0.001, 0.008, 0.04 , 0.028, 0.067, 0.082, 0.014, 0.001, 0.054,
+       0.066, 0.086, 0.033, 0.01 , 0.027, 0.001, 0.023, 0.   ])
+'''
+
+# We can apply an elementwise multiplication or division
+
+np.array([np.sum(hv_cnts, axis=1)]).T
+
+'''
+Output:
+array([[629980],
+       [472937],
+       [ 36313],
+       [ 96739],
+       [469995]])
+'''
+
+hv_dist = hv_cnts / np.array([np.sum(hv_cnts, axis=1)]).T
+print(hv_dist)
+
+'''
+Output:
+array([[0.081, 0.014, 0.018, 0.045, 0.123, 0.026, 0.02 , 0.08 , 0.061,
+        0.003, 0.007, 0.04 , 0.026, 0.067, 0.081, 0.014, 0.   , 0.058,
+        0.065, 0.086, 0.029, 0.01 , 0.025, 0.001, 0.019, 0.   ],
+       [0.08 , 0.014, 0.018, 0.044, 0.126, 0.022, 0.021, 0.074, 0.061,
+        0.001, 0.008, 0.04 , 0.028, 0.067, 0.082, 0.014, 0.001, 0.054,
+        0.066, 0.086, 0.033, 0.01 , 0.027, 0.001, 0.023, 0.   ],
+       [0.075, 0.016, 0.02 , 0.04 , 0.12 , 0.023, 0.022, 0.069, 0.062,
+        0.001, 0.007, 0.05 , 0.029, 0.062, 0.081, 0.016, 0.   , 0.062,
+        0.072, 0.081, 0.028, 0.01 , 0.028, 0.001, 0.025, 0.001],
+       [0.071, 0.017, 0.021, 0.042, 0.125, 0.025, 0.022, 0.072, 0.062,
+        0.001, 0.008, 0.045, 0.021, 0.068, 0.072, 0.017, 0.001, 0.069,
+        0.074, 0.09 , 0.027, 0.009, 0.026, 0.001, 0.015, 0.001],
+       [0.078, 0.015, 0.021, 0.051, 0.118, 0.025, 0.02 , 0.07 , 0.065,
+        0.002, 0.006, 0.04 , 0.022, 0.069, 0.069, 0.018, 0.001, 0.068,
+        0.078, 0.084, 0.029, 0.009, 0.024, 0.001, 0.017, 0.001]])
+'''
+
+# The Hadamard product
+
+hv_dist * hv_dist
+
+'''
+Output:
+array([[6.558e-03, 2.013e-04, 3.366e-04, 2.022e-03, 1.512e-02, 6.543e-04,
+        3.997e-04, 6.348e-03, 3.667e-03, 6.645e-06, 4.907e-05, 1.614e-03,
+        6.982e-04, 4.486e-03, 6.623e-03, 2.088e-04, 2.018e-07, 3.348e-03,
+        4.286e-03, 7.395e-03, 8.537e-04, 9.253e-05, 6.183e-04, 8.980e-07,
+        3.572e-04, 2.032e-07],
+       [6.330e-03, 1.945e-04, 3.291e-04, 1.922e-03, 1.598e-02, 4.881e-04,
+        4.296e-04, 5.410e-03, 3.707e-03, 8.038e-07, 5.894e-05, 1.605e-03,
+        7.623e-04, 4.546e-03, 6.722e-03, 1.994e-04, 2.930e-07, 2.945e-03,
+        4.394e-03, 7.326e-03, 1.061e-03, 1.031e-04, 7.543e-04, 5.477e-07,
+        5.380e-04, 6.874e-08],
+       [5.594e-03, 2.525e-04, 3.953e-04, 1.573e-03, 1.444e-02, 5.428e-04,
+        4.927e-04, 4.770e-03, 3.839e-03, 3.670e-07, 5.447e-05, 2.476e-03,
+        8.250e-04, 3.832e-03, 6.586e-03, 2.455e-04, 1.092e-07, 3.788e-03,
+        5.194e-03, 6.551e-03, 8.045e-04, 9.828e-05, 7.936e-04, 1.095e-06,
+        6.211e-04, 3.670e-07],
+       [5.001e-03, 2.797e-04, 4.343e-04, 1.733e-03, 1.567e-02, 6.279e-04,
+        4.926e-04, 5.216e-03, 3.892e-03, 3.720e-07, 6.534e-05, 1.983e-03,
+        4.390e-04, 4.587e-03, 5.172e-03, 2.977e-04, 3.002e-07, 4.800e-03,
+        5.451e-03, 8.110e-03, 7.129e-04, 8.694e-05, 6.572e-04, 7.720e-07,
+        2.268e-04, 4.377e-07],
+       [6.089e-03, 2.135e-04, 4.548e-04, 2.578e-03, 1.388e-02, 6.110e-04,
+        4.177e-04, 4.946e-03, 4.232e-03, 3.724e-06, 3.305e-05, 1.594e-03,
+        4.711e-04, 4.710e-03, 4.809e-03, 3.151e-04, 1.272e-06, 4.657e-03,
+        6.008e-03, 7.055e-03, 8.514e-04, 8.661e-05, 5.575e-04, 1.420e-06,
+        2.936e-04, 3.300e-07]])
+'''
+
+# Matrix Product
+
+hv_dist[0, :].reshape(1, -1) @ hv_dist[1, :]
+# Output: array([0.066])
+
+np.dot(hv_dist[0, :], hv_dist[1, :])
+# Output: 0.06581149298284382
+
+hv_dist[0, :] @ hv_dist[1, :]
+# Output: 0.06581149298284382
+
+# Document Cosines
+
+hv_dot = hv_dist @ hv_dist.T
+print(hv_dot)
+
+'''
+Output:
+array([[0.066, 0.066, 0.065, 0.066, 0.065],
+       [0.066, 0.066, 0.065, 0.066, 0.065],
+       [0.065, 0.065, 0.064, 0.065, 0.064],
+       [0.066, 0.066, 0.065, 0.066, 0.065],
+       [0.065, 0.065, 0.064, 0.065, 0.065]])
+For the vector noms, ||u|| and ||v||, we can use np.linalg.norm(). Here we will break down the computation with elementary operations.
+We will apply the Hadamard product to have the square of the coordinates, then sum along the rows, and finally extract the square root:
+'''
+
+hv_norm = np.sqrt(np.sum(hv_dist * hv_dist, axis=1))
+
+print(hv_norm)
+# Output:
+'''
+array([0.257, 0.257, 0.253, 0.257, 0.255])
+We compute the product of the norms, ||u|| * ||v||, as a matrix product of a column vector by a row vector as with:
+'''
+
+hv_norm_pairs = hv_norm.reshape(-1, 1) @ hv_norm.reshape(1, -1)
+print(hv_norm_pairs)
+
+'''
+Output:
+array([[0.066, 0.066, 0.065, 0.066, 0.065],
+       [0.066, 0.066, 0.065, 0.066, 0.065],
+       [0.065, 0.065, 0.064, 0.065, 0.064],
+       [0.066, 0.066, 0.065, 0.066, 0.065],
+       [0.065, 0.065, 0.064, 0.065, 0.065]])
+We now nearly done with the cosine. We only need to divide the matrix elements by the norm products (u*v)/||u|| * ||v||.
+'''
+
+hv_cos = hv_dot / hv_norm_pairs
+print(hv_cos) # Output:
+'''
+array([[1.   , 0.999, 0.997, 0.996, 0.995],
+       [0.999, 1.   , 0.997, 0.995, 0.994],
+       [0.997, 0.997, 1.   , 0.996, 0.995],
+       [0.996, 0.995, 0.996, 1.   , 0.998],
+       [0.995, 0.994, 0.995, 0.998, 1.   ]])
+'''
+
+# Elementary Mathematical Background for Matrices
+'''
+A = np.array([[1, 2],
+              [3, 4]])
+A @ np.array([5, 6])
+'''
+
+# Output: array([17, 39])
+
+# Matrices and Rotations
+# To finish this notebook, we will have a look at vector rotation. From algebra courses, we know that we can use a matrix to compute a rotation of angle θ. For a two-dimensional vector, the rotation matrix is:
+
+theta_45 = np.pi/4
+rot_mat_45 = np.array([[np.cos(theta_45), -np.sin(theta_45)],
+                       [np.sin(theta_45), np.cos(theta_45)]])
+print(rot_mat_45)
+
+'''
+array([[ 0.707, -0.707],
+       [ 0.707,  0.707]])
+we rotate vector (1, 1) by this angle
+'''
+
+rot_mat_45 @ np.array([1, 1])
+
+'''
+array([1.110e-16, 1.414e+00])
+The matrix of a sequence of rotations, for instance a rotation of 
+pi/6 followed by a rotation of pi/4, is simply the matrix product of the individual rotations
+R01,R02 = R(01+02), here Rpi/4, Rpi/6 = Rpi/12
+'''
+
+theta_30 = np.pi/6
+rot_mat_30 = np.array([[np.cos(theta_30), -np.sin(theta_30)],
+                       [np.sin(theta_30), np.cos(theta_30)]])
+print(rot_mat_30)
+
+'''
+array([[ 0.866, -0.5  ],
+       [ 0.5  ,  0.866]])
+rot_mat_30 @ rot_mat_45
+'''
+
+rot_mat_45 @ rot_mat_30
+'''
+array([[ 0.259, -0.966],
+       [ 0.966,  0.259]])
+'''
+
+np.arccos(0.25881905)
+# Output: 1.3089969339255036
+
+np.pi/4 + np.pi/6
+# Output: 1.308996938995747
+
+# Inverting a Matrix
+
+np.linalg.inv(rot_mat_30)
+
+# Output:
+'''
+array([[ 0.866,  0.5  ],
+       [-0.5  ,  0.866]])
+'''
+
+np.linalg.inv(rot_mat_30) @ rot_mat_30
+
+'''
+Output:
+array([[1.000e+00, 7.437e-18],
+       [6.295e-17, 1.000e+00]])
+'''
+
+torch.linalg.inv(torch.from_numpy(rot_mat_30))
+
+'''
+Output:
+tensor([[ 0.8660,  0.5000],
+        [-0.5000,  0.8660]], dtype=torch.float64)
+'''
+
+torch.linalg.inv(torch.from_numpy(rot_mat_30)) @ torch.from_numpy(rot_mat_30)
+
+'''
+Output:
+tensor([[ 1.0000e+00, -4.0637e-17],
+        [ 6.2948e-17,  1.0000e+00]], dtype=torch.float64)
+'''
+
+# Application to Neural Networks
+# Pytorch
+
+layer1 = torch.nn.Linear(3, 4, bias=False)
+print(layer1.weight)
+
+# Output
+'''
+
+Parameter containing:
+tensor([[-0.4324,  0.0435,  0.1806],
+        [-0.5352,  0.0966,  0.2330],
+        [-0.2231,  0.5196, -0.0784],
+        [-0.2372,  0.1172, -0.3739]], requires_grad=True)
+'''
+x = torch.tensor([1.0, 2.0, 3.0])
+layer1(x)
+# Output: tensor([ 0.1963,  0.3571,  0.5810, -1.1245], grad_fn=<SqueezeBackward4>)
+layer1.weight @ x
+# Output: tensor([ 0.1963,  0.3571,  0.5810, -1.1245], grad_fn=<MvBackward0>)
+# Or see: https://pytorch.org/docs/stable/generated/torch.nn.Linear.html
+
+x @ layer1.weight.T
+# Output: tensor([ 0.1963,  0.3571,  0.5810, -1.1245], grad_fn=<SqueezeBackward4>)
+
+
+
+# More Layers
+layer1 = torch.nn.Linear(3, 4, bias=False)
+layer2 = torch.nn.Linear(4, 2, bias=False)
+layer3 = torch.nn.Linear(2, 1, bias=False)
+
+print(layer1.weight, layer2.weight, layer3.weight)
+
+'''
+(Parameter containing:
+ tensor([[ 0.5711, -0.2106,  0.5642],
+         [-0.1257,  0.3728, -0.4489],
+         [-0.1961, -0.0592, -0.0630],
+         [-0.4868,  0.2738,  0.5165]], requires_grad=True),
+ Parameter containing:
+ tensor([[ 0.3872,  0.2588,  0.3612, -0.1009],
+         [ 0.2428, -0.2557, -0.2185, -0.2425]], requires_grad=True),
+ Parameter containing:
+ tensor([[-0.7031, -0.4677]], requires_grad=True))
+'''
+layer3(layer2(layer1(x)))
+
+# Output: tensor([-0.2923], grad_fn=<SqueezeBackward4>)
+
+x @ layer1.weight.T @ layer2.weight.T @ layer3.weight.T
+# Output: tensor([-0.2923], grad_fn=<SqueezeBackward4>)
+
+
+
+
+
+# Automatic Differentiation
+ 
+
+def f(x, y):
+    return x**2 + x * y + y**2
+x = torch.tensor(3.0, requires_grad=True)
+y = torch.tensor(4.0, requires_grad=True)
+z = f(x, y)
+print(z)
+# Output: tensor(37., grad_fn=<AddBackward0>)
+# The retain_graph is necessary to visualize the graph below
+
+z.backward(retain_graph=True)
+print(z)
+# Output: tensor(37., grad_fn=<AddBackward0>)
+print(z.grad_fn)
+# Output: <AddBackward0 at 0x12fb25750>
+print(z.grad_fn.next_functions)
+# Output: ((<AddBackward0 at 0x12fb269e0>, 0), (<PowBackward0 at 0x12fb240d0>, 0))
+print(z.grad_fn.next_functions[0][0].next_functions)
+# Output: ((<PowBackward0 at 0x12fb24a30>, 0), (<MulBackward0 at 0x12fb26da0>, 0))
+print(z.grad_fn.next_functions[0][0].next_functions[0][0].next_functions)
+#Output: ((<AccumulateGrad at 0x12fb26920>, 0),)
+print(z.grad_fn.next_functions[0][0].next_functions[0][0].next_functions[0][0].next_functions)
+
+# Output: ()
+
+
+
+x.grad, y.grad
+# Output: (tensor(10.), tensor(11.))
+
+
+from torchviz import make_dot
+make_dot(z, params={'x': x, 'y': y, 'z': z}, show_attrs=True).render(
+    "autograd_torchviz", format="png")
+# Output: 'autograd_torchviz.png'
+make_dot(z, params={'x': x, 'y': y, 'z': z}, show_attrs=True)
+# Output bilden på hemsidan
+
+# Laddat ner C:\Program Files\Graphviz 

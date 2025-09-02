@@ -1,0 +1,41 @@
+digraph {
+	graph [size="12,12"]
+	node [align=left fontname=monospace fontsize=10 height=0.2 ranksep=0.1 shape=box style=filled]
+	1452540419744 [label="z
+ ()" fillcolor=darkolivegreen1]
+	1452540131456 [label="AddBackward0
+------------
+alpha: 1"]
+	1452577383968 -> 1452540131456
+	1452577383968 [label="AddBackward0
+------------
+alpha: 1"]
+	1452577384208 -> 1452577383968
+	1452577384208 [label="PowBackward0
+------------------------
+exponent:              2
+self    : [saved tensor]"]
+	1452577384256 -> 1452577384208
+	1452540418064 [label="x
+ ()" fillcolor=lightblue]
+	1452540418064 -> 1452577384256
+	1452577384256 [label=AccumulateGrad]
+	1452577383872 -> 1452577383968
+	1452577383872 [label="MulBackward0
+---------------------
+other: [saved tensor]
+self : [saved tensor]"]
+	1452577384256 -> 1452577383872
+	1452522859792 -> 1452577383872
+	1452540418864 [label="y
+ ()" fillcolor=lightblue]
+	1452540418864 -> 1452522859792
+	1452522859792 [label=AccumulateGrad]
+	1452577384016 -> 1452540131456
+	1452577384016 [label="PowBackward0
+------------------------
+exponent:              2
+self    : [saved tensor]"]
+	1452522859792 -> 1452577384016
+	1452540131456 -> 1452540419744
+}

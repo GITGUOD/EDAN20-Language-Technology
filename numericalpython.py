@@ -1,4 +1,7 @@
 # Chapter 5: Python
+import os
+os.environ["PATH"] += os.pathsep + r"C:\Program Files\Graphviz\bin"
+
 # An introduction to linear algebra with NumPy and PyTorch by Pierre Nugues
 
 # The Corpus
@@ -984,3 +987,4 @@ make_dot(z, params={'x': x, 'y': y, 'z': z}, show_attrs=True)
 # Output bilden på hemsidan
 
 # Laddat ner C:\Program Files\Graphviz 
+# Lägga till de som miljövariabler i path i systeminställningar

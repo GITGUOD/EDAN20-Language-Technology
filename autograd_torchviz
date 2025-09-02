@@ -1,41 +1,41 @@
 digraph {
 	graph [size="12,12"]
 	node [align=left fontname=monospace fontsize=10 height=0.2 ranksep=0.1 shape=box style=filled]
-	1452540419744 [label="z
+	1597503363328 [label="z
  ()" fillcolor=darkolivegreen1]
-	1452540131456 [label="AddBackward0
+	1597472901200 [label="AddBackward0
 ------------
 alpha: 1"]
-	1452577383968 -> 1452540131456
-	1452577383968 [label="AddBackward0
+	1597539962208 -> 1597472901200
+	1597539962208 [label="AddBackward0
 ------------
 alpha: 1"]
-	1452577384208 -> 1452577383968
-	1452577384208 [label="PowBackward0
+	1597540085392 -> 1597539962208
+	1597540085392 [label="PowBackward0
 ------------------------
 exponent:              2
 self    : [saved tensor]"]
-	1452577384256 -> 1452577384208
-	1452540418064 [label="x
+	1597540085536 -> 1597540085392
+	1597503363648 [label="x
  ()" fillcolor=lightblue]
-	1452540418064 -> 1452577384256
-	1452577384256 [label=AccumulateGrad]
-	1452577383872 -> 1452577383968
-	1452577383872 [label="MulBackward0
+	1597503363648 -> 1597540085536
+	1597540085536 [label=AccumulateGrad]
+	1597540085344 -> 1597539962208
+	1597540085344 [label="MulBackward0
 ---------------------
 other: [saved tensor]
 self : [saved tensor]"]
-	1452577384256 -> 1452577383872
-	1452522859792 -> 1452577383872
-	1452540418864 [label="y
+	1597540085536 -> 1597540085344
+	1597540085584 -> 1597540085344
+	1597503364528 [label="y
  ()" fillcolor=lightblue]
-	1452540418864 -> 1452522859792
-	1452522859792 [label=AccumulateGrad]
-	1452577384016 -> 1452540131456
-	1452577384016 [label="PowBackward0
+	1597503364528 -> 1597540085584
+	1597540085584 [label=AccumulateGrad]
+	1597539966720 -> 1597472901200
+	1597539966720 [label="PowBackward0
 ------------------------
 exponent:              2
 self    : [saved tensor]"]
-	1452522859792 -> 1452577384016
-	1452540131456 -> 1452540419744
+	1597540085584 -> 1597539966720
+	1597472901200 -> 1597503363328
 }

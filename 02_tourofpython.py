@@ -764,7 +764,20 @@ else:
 
 # Basic File Input/Output
 
-CORPUS_PATH = '../datasets/classics/'
+CORPUS_PATH = 'C:\\Users\\tonny\\OneDrive\\Documents\\EDAN20\\EDAN20\\'
+
+def count_letters(text, lc=True):
+    letter_count = {}
+    if lc:
+        text = text.lower()
+    for letter in text:
+        if letter.lower() in alphabet:
+            if letter in letter_count:
+                letter_count[letter] += 1
+            else:
+                letter_count[letter] = 1
+    return letter_count
+
 try:
     # We open a file and we get a file object
     f_iliad = open(CORPUS_PATH + 'iliad.mb.txt', 'r', encoding='utf-8')
@@ -772,3 +785,53 @@ try:
     f_iliad.close()  # We close the file
 except:
     iliad_txt = None
+
+iliad_stats = count_letters(iliad_txt)  # We count the letters
+print(iliad_stats)
+
+with open(CORPUS_PATH + 'iliad_stats.txt', 'w') as f:
+    f.write(str(iliad_stats))
+    # we automatically close the file
+
+# This block writes the letter counts to a file and ensures the file is properly closed, without needing f.close() manually.
+
+# Collecting a Corpus
+
+classics_url = {'iliad': 'http://classics.mit.edu/Homer/iliad.mb.txt',
+                'odyssey': 'http://classics.mit.edu/Homer/odyssey.mb.txt',
+                'eclogue': 'http://classics.mit.edu/Virgil/eclogue.mb.txt',
+                'georgics': 'http://classics.mit.edu/Virgil/georgics.mb.txt',
+                'aeneid': 'http://classics.mit.edu/Virgil/aeneid.mb.txt'}
+# Read the text from URLs
+
+import requests
+
+classics = {}
+for key in classics_url:
+    classics[key] = requests.get(classics_url[key]).text
+
+# We remove the license information to keep only the text
+
+import regex as re
+
+for key in classics:
+    classics[key] = re.search(r'^-+$(.+)^-+$',
+                              classics[key],
+                              re.M | re.S).group(1)
+
+print(classics['iliad'][:50])
+
+# Var tvungen och python -m pip install regex för att använda modulen
+
+with open(CORPUS_PATH + 'iliad.txt', 'w') as f_il, open(CORPUS_PATH + 'odyssey.txt', 'w') as f_od:
+    f_il.write(classics['iliad'])
+    f_od.write(classics['odyssey'])
+
+
+import json
+
+with open(CORPUS_PATH + 'classics.json', 'w') as f:
+    json.dump(classics, f)
+
+with open(CORPUS_PATH + 'classics.json', 'r') as f:
+    classics = json.loads(f.read())

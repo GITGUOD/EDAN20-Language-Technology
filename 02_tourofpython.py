@@ -146,9 +146,9 @@ print('{} string {}'.format(begin, 'is empty')) # 'my string is empty'
 '''
 
 # Data identifies and types
+alphabet = 'abcdefghijklmnopqrstuvwxyz'
 
 '''
-alphabet = 'abcdefghijklmnopqrstuvwxyz'
 print(12)
 print(type(12)) # <class 'int'>
 print(id(12)) # Jag fick inte outputen 4305677768
@@ -384,6 +384,7 @@ print(iliad_chars.intersection(set(alphabet)))
 
 # Dictionaries
 
+'''
 wordcount = {}  # We create an empty dictionary
 wordcount = dict()  # Another way to create a dictionary
 wordcount['a'] = 21  # The key 'a' has value 21
@@ -415,3 +416,237 @@ missing_proof['the']
 
 print(missing_proof['the']) # Here, int is used as the “default factory”. int() with no arguments → 0. So, any missing key will automatically get the value 0.
 # so defaultdict is jjust a dictionary but more freedom to choose defaultvalue?
+
+#Dictionary Functions
+wordcount.keys()
+
+print(wordcount.keys())  # dict_keys(['a', 'And', 'the'])
+
+print(wordcount.values())  # dict_values([21, 10, 18])
+print(wordcount.items())  # dict_items([('a', 21), ('And', 10), ('the', 18)])
+
+# Keys must be immutable
+my_dict = {}
+my_dict[('And', 'the')] = 3
+# my_dict[[1, 2]] = 4  # Type error: list is not hashable
+
+# Counting Letters with a dictionary
+
+letter_count = {}
+for letter in iliad_opening.lower():
+    if letter in alphabet:
+        if letter in letter_count:
+            letter_count[letter] += 1
+        else:
+            letter_count[letter] = 1
+
+print('Iliad')
+print(letter_count)
+
+print("newLine")
+# Sorting the letters by frequency
+for letter in sorted(letter_count.keys()):
+    print(letter, letter_count[letter]) 
+'''
+
+# Control Structures
+
+# Conditionals
+
+'''
+
+digits = '0123456789'
+punctuation = '.,;:?!'
+char = '.'
+
+if char in alphabet:
+    print('Letter')
+elif char in digits:
+    print('Number')
+elif char in punctuation:
+    print('Punctuation')
+else:
+    print('Other')
+
+
+# The for... in loop
+
+sum = 0
+for i in range(100):
+    sum += i
+print(sum)  # Sum of integers from 0 to 99: 4950
+# Using the built-in sum() function,
+# sum(range(100)) would produce the same result.
+
+list10 = list(range(5))  # [0, 1, 2, 3, 4]
+print(list10)
+
+for inx, letter in enumerate(alphabet):
+    print(inx, letter)
+
+# inx = index, letter = element, and enumerate is just a neat shortcut to keep track of both in one loop.
+# enumerate(alphabet) produces pairs: (0, 'a'), (1, 'b'), (2, 'c'), (3, 'd')
+
+
+# We cannot change an iteration variable in Python
+for i in list10:
+    if i == 0:
+        i = 10
+print(list10)    # [0, 1, 2, 3, 4]
+
+#The variable i you use in a for loop is just a copy of the element from the list (or whatever iterable you loop over).
+#Changing i won’t change the list itself.
+
+# While loop
+sum, i = 0, 0
+while i < 100:
+    sum += i
+    i += 1
+print(sum)
+
+sum, i = 0, 0
+while True:
+    sum += i
+    i += 1
+    if i >= 100:
+        break
+print(sum)
+
+# Exceptions
+
+try:
+    int(alphabet)
+    int('12.0')
+except:
+    pass
+print('Cleared the exception!')
+
+try:
+    int(alphabet)
+    int('12.0')
+except ValueError:
+    print('Caught a value error!')
+except TypeError:
+    print('Caught a type error!')
+
+
+# lc is for lowercase. It is to set the characters in lowercase
+# We define a function with the def keyword:
+def count_letters(text, lc=True):
+    letter_count = {}
+    if lc:
+        text = text.lower()
+    for letter in text:
+        if letter.lower() in alphabet:
+            if letter in letter_count:
+                letter_count[letter] += 1
+            else:
+                letter_count[letter] = 1
+    return letter_count
+
+
+# We call the function with it default arguments
+od = count_letters(iliad_opening)
+for letter in sorted(od.keys()):
+    print(letter, od[letter])
+
+print(type(count_letters))
+
+
+# Documenting Functions
+
+def count_letters(text, lc=True):
+    """
+    Count the letters in a text
+    Arguments:
+        text: input text
+        lc: lowercase. If true, sets the characters 
+        in lowercase
+    Returns: The letter counts
+    """
+    letter_count = {}
+    if lc:
+        text = text.lower()
+    for letter in text:
+        if letter.lower() in alphabet:
+            if letter in letter_count:
+                letter_count[letter] += 1
+            else:
+                letter_count[letter] = 1
+    return letter_count
+
+help(count_letters)
+
+# Pilen är bara retur typ
+def count_letters(text: str, lc: bool = True) -> dict[str, int]:
+    """
+    Count the letters in a text
+    Arguments:
+        text: input text
+        lc: lowercase. If true, sets the characters in lowercase
+    Returns: The letter counts
+    """
+    letter_count = {}
+    if lc:
+        text = text.lower()
+    for letter in text:
+        if letter.lower() in alphabet:
+            if letter in letter_count:
+                letter_count[letter] += 1
+            else:
+                letter_count[letter] = 1
+    return letter_count
+
+'''
+# Comprehension and Generators
+
+word = 'acress'
+splits = [(word[:i], word[i:]) for i in range(len(word) + 1)]
+print(splits)
+
+deletes = [a + b[1:] for a, b in splits if b]
+print(deletes)
+
+splits = []
+for i in range(len(word) + 1):
+    splits.append((word[:i], word[i:]))
+print(splits)
+
+deletes = []
+for a, b in splits:
+    if b:
+        deletes.append(a + b[1:])
+print(deletes)
+
+print("new line")
+# Generators
+
+    # Generators are similar to comprehensions, but they create the elements on demand
+
+splits_generator = ((word[:i], word[i:])
+                    for i in range(len(word) + 1))
+
+print(splits_generator)
+
+for i in splits_generator:
+    print(i)
+
+# We can traverse a generator only once
+for i in splits_generator:
+    print(i)  # Nothing
+print(type(splits_generator))  # <class 'generator'>
+
+# Iterators:
+
+my_iterator = iter('abc')
+
+# We access the next item of iterators with the a next() function:
+print(next(my_iterator))
+print(next(my_iterator))
+
+print(next(my_iterator))
+
+#print(next(my_iterator)) Error as StopIteration
+
+# zip()
+

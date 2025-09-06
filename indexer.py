@@ -67,9 +67,8 @@ line = 'En gång hade de på Mårbacka en barnpiga, som hette Back-Kajsa'
 
 match = re.findall(regex, line)
 
-
- #print(index)
-# print(match)
+# print(index) #printar texten
+# print(match) #printar line
 
 # Using regex, write tokenize(text) function to tokenize a text. Return their positions.
 
@@ -79,4 +78,19 @@ def tokenize(text):
     return match
 
 tokens = tokenize(line)
-print(list(tokens))
+#print(list(tokens)) # printar index och objekt
+
+# Extracting indices
+
+def text_to_idx(text):
+    newIndex = dict()
+    for match in text:
+        word = match.group()
+        position = match.start()
+        if word not in newIndex:
+            newIndex[word] = []
+        newIndex[word].append(position)
+    return newIndex
+
+tokens = tokenize(line.lower().strip())
+print(text_to_idx(tokens)) # printar  endast indexet på texten samt matchen

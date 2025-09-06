@@ -60,10 +60,23 @@ pickle.dump(index, open("index.p", "wb"))
 
 text = pickle.load(open("index.p", "rb"))
 
-line = "framkomma att älska förett liv"
+regex = r'\p{L}+' # Kan vara vad som egentligen, t.ex "b.c" om du vill matcha med back-kajsa (början)
+# Detta funkar eftersom vi skippar commat, och binde streck vilket gör att Back och Kajsa blir olika ord.
 
-regex = re.findall(r"f.a", line) #Försöker ta fram ordet 'framkomma'
+line = 'En gång hade de på Mårbacka en barnpiga, som hette Back-Kajsa'
+
+match = re.findall(regex, line)
 
 
-print(index)
-print(regex)
+#print(index)
+print(match)
+
+# Using regex, write tokenize(text) function to tokenize a text. Return their positions.
+
+def tokenize(text):
+    regex = r'\p{L}+'
+    match = re.findall(regex, text)
+    return match
+
+tokens = tokenize('En gång hade de på Mårbacka en barnpiga, som hette Back-Kajsa.')
+list(tokens)

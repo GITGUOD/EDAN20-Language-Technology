@@ -68,15 +68,15 @@ line = 'En gång hade de på Mårbacka en barnpiga, som hette Back-Kajsa'
 match = re.findall(regex, line)
 
 
-#print(index)
-print(match)
+ #print(index)
+# print(match)
 
 # Using regex, write tokenize(text) function to tokenize a text. Return their positions.
 
 def tokenize(text):
     regex = r'\p{L}+'
-    match = re.findall(regex, text)
+    match = re.finditer(regex, text)
     return match
 
-tokens = tokenize('En gång hade de på Mårbacka en barnpiga, som hette Back-Kajsa.')
-list(tokens)
+tokens = tokenize(line)
+print(list(tokens))

@@ -94,3 +94,7 @@ def text_to_idx(text):
 
 tokens = tokenize(line.lower().strip())
 print(text_to_idx(tokens)) # printar  endast indexet på texten samt matchen
+
+
+# Exercise 4? Reading one file
+#Read one file, Mårbacka, marbacka.txt, set it in lowercase, tokenize it, and index it. Call this index idx

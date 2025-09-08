@@ -169,3 +169,12 @@ print(readAllFilesTokenizeAndIndexAll('Selma/', 'txt', r'\bmårbacka\b')) #
 
 # Concordances
 # Write a concordance(word, master_index, window) function to extract the concordances of a word within a window of window characters
+
+def concordance(word, master_index, window):
+
+    try:
+        if word.lower() in master_index:
+             return ''
+    except Exception as e:
+        print(f"The word does not exist in master_index: {e}")
+        return None

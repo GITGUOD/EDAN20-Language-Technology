@@ -19,7 +19,7 @@ Write a program that reads one document file_name.txt and outputs an index file:
 The index file will contain all the unique words in the document, where each word is associated with the list of its positions in the document.
 You will represent this index as a dictionary, where the keys will be the words, and the values, the lists of positions
 As words, you will consider all the strings of letters that you will set in lower case. You will not index the rest (i.e. numbers, punctuations, or symbols).
-To extract the words, use Unicode regular expressions. Do not use \w+, for instance, but the Unicode equivalent.
+To extract the words, use Unicode regular expressions. Do not use \\w+, for instance, but the Unicode equivalent.
 The word positions will correspond to the number of characters from the beginning of the file. (The word offset from the beginning)
 You will use the finditer() method to find the positions of the words. This will return you match objects, where you will get the matches and the positions with the group() and start() methods.
 You will use the pickle package to write your dictionary in an file, see https://wiki.python.org/moin/UsingPickle.
@@ -139,7 +139,7 @@ def get_files(dir, suffix):
  
 # Creating a master index:
 
-def readAllFilesTokenizeAndIndexAll(dir, suffix):
+def readAllFilesTokenizeAndIndexAll(dir, suffix, regex):
     # Lägga till alla filer
     files = get_files(dir, suffix) # Den returnerar alla texter så som bannlyst.txt
 
@@ -149,19 +149,23 @@ def readAllFilesTokenizeAndIndexAll(dir, suffix):
     for file in files:
         # OS metoden här hjälper oss öppna alla våra filer
         file_path = os.path.join(dir, file)
-        index = read_file_and_tokenize_and_index_it(file_path)
+        index = read_file_and_tokenize_and_index_it(file_path, regex)
 
         for word, position in index.items():
             if word not in masterIndex:
                 masterIndex[word] = dict()
-            else:
-                masterIndex[word][file] = position
+            masterIndex[word][file] = position
 
 
     return masterIndex
     
 
-print(readAllFilesTokenizeAndIndexAll('Selma/', 'txt'))
+print(readAllFilesTokenizeAndIndexAll('Selma/', 'txt', r'\bsamlar\b')) # Skrev innan 'samlar' med den hämtade också t.ex 'samlar'
+
+print(readAllFilesTokenizeAndIndexAll('Selma/', 'txt', r'\bmårbacka\b')) # 
 
 
 
+
+# Concordances
+# Write a concordance(word, master_index, window) function to extract the concordances of a word within a window of window characters

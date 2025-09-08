@@ -42,8 +42,8 @@ text = open('Selma/bannlyst.txt').read()
 
 
 index = dict() # Skapa en dictionary
-
-for match in re.finditer(r'\p{L}+', text): # För varje match i texten, L för letters då vi inte vill ha andra symboler etc. Lägga till + för att få med hela ordet
+wholeText = re.finditer(r'\p{L}+', text)
+for match in wholeText: # För varje match i texten, L för letters då vi inte vill ha andra symboler etc. Lägga till + för att få med hela ordet
     word = match.group().lower() # Varje match kör vi till lower case
     position = match.start() # hämtar positionen av ordet
     if word not in index: # Lägga till ordet i vår dictionary för första gången
@@ -72,8 +72,7 @@ match = re.findall(regex, line)
 
 # Using regex, write tokenize(text) function to tokenize a text. Return their positions.
 
-def tokenize(text):
-    regex = r'\p{L}+'
+def tokenize(text, regex = r'\p{L}+'):
     match = re.finditer(regex, text)
     return match
 
@@ -93,8 +92,76 @@ def text_to_idx(text):
     return newIndex
 
 tokens = tokenize(line.lower().strip())
-print(text_to_idx(tokens)) # printar  endast indexet på texten samt matchen
+# print(text_to_idx(tokens)) # printar  endast indexet på texten samt matchen
 
 
 # Exercise 4? Reading one file
 #Read one file, Mårbacka, marbacka.txt, set it in lowercase, tokenize it, and index it. Call this index idx
+
+# Method for this:
+def read_file_and_tokenize_and_index_it(file, regex = r'\p{L}+'):
+    # Reading file
+    text = open(file, 'r', encoding='utf-8').read().lower() # text = open(file).read().lower() # didn't work here as we needed the utf-8 for our swedish characters
+    
+    # Tokenize words (letters including Swedish characters)
+    words = tokenize(text, regex)
+
+    index = text_to_idx(words) # Index it
+
+    return index
+
+text = read_file_and_tokenize_and_index_it('Selma/marbacka.txt')
+# print(text)
+
+
+# Index "Mårbacka"
+textMårbacka = read_file_and_tokenize_and_index_it(file = 'Selma/marbacka.txt', regex = 'mårbacka')
+# print(textMårbacka)
+# Stämmer med output på labben
+
+
+# Reading the content of a folder
+
+def get_files(dir, suffix):
+    """
+    Returns all the files in a folder ending with suffix
+    :param dir:
+    :param suffix:
+    :return: the list of file names
+    """
+    files = []
+    for file in os.listdir(dir):
+        if file.endswith(suffix):
+            files.append(file)
+    return files
+
+# print(get_files('Selma/', 'txt'))
+ 
+# Creating a master index:
+
+def readAllFilesTokenizeAndIndexAll(dir, suffix):
+    # Lägga till alla filer
+    files = get_files(dir, suffix) # Den returnerar alla texter så som bannlyst.txt
+
+    #Nu behöver vi kunna länka de hit så att metoden kan komma åt den via os klassen
+
+    masterIndex = dict()
+    for file in files:
+        # OS metoden här hjälper oss öppna alla våra filer
+        file_path = os.path.join(dir, file)
+        index = read_file_and_tokenize_and_index_it(file_path)
+
+        for word, position in index.items():
+            if word not in masterIndex:
+                masterIndex[word] = dict()
+            else:
+                masterIndex[word][file] = position
+
+
+    return masterIndex
+    
+
+print(readAllFilesTokenizeAndIndexAll('Selma/', 'txt'))
+
+
+

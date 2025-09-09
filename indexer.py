@@ -160,9 +160,9 @@ def readAllFilesTokenizeAndIndexAll(dir, suffix, regex):
     return masterIndex
     
 
-print(readAllFilesTokenizeAndIndexAll('Selma/', 'txt', r'\bsamlar\b')) # Skrev innan 'samlar' med den hämtade också t.ex 'samlar'
+#print(readAllFilesTokenizeAndIndexAll('Selma/', 'txt', r'\bsamlar\b')) # Skrev innan 'samlar' med den hämtade också t.ex 'samlar'
 
-print(readAllFilesTokenizeAndIndexAll('Selma/', 'txt', r'\bmårbacka\b')) # 
+#print(readAllFilesTokenizeAndIndexAll('Selma/', 'txt', r'\bmårbacka\b')) # 
 
 
 
@@ -172,9 +172,26 @@ print(readAllFilesTokenizeAndIndexAll('Selma/', 'txt', r'\bmårbacka\b')) #
 
 def concordance(word, master_index, window):
 
+    # Extracting a word within a window of characters
     try:
-        if word.lower() in master_index:
-             return ''
+        
+        for filename, position in master_index[word.lower()].items():
+            print(filename)
+
+            # Vi behöver hämta texterna för att kunna sedan hitta snippet/meningen vid ordet
+            file_path = os.path.join('Selma/', filename)
+            text = open(file_path, 'r', encoding='utf-8').read().lower()
+
+            for pos in position:
+                start = max(0, pos - window)
+                end = min(len(text), pos + window)
+                snippet = text[start:end].replace('\n', ' ')
+                print("\t" + snippet)
+        return 'End'
+
+
     except Exception as e:
-        print(f"The word does not exist in master_index: {e}")
-        return None
+        return f"The word '{word}' does not exist in master_index: {e}"
+
+masterIndex = readAllFilesTokenizeAndIndexAll('Selma/', 'txt', r'\p{L}+')
+print(concordance('samlar', masterIndex, 25))

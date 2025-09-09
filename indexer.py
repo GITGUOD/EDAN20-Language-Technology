@@ -182,6 +182,7 @@ def concordance(word, master_index, window):
             file_path = os.path.join('Selma/', filename)
             text = open(file_path, 'r', encoding='utf-8').read().lower()
 
+            # iterera till positionen av ordet vi letar efter och klipper ett snipp
             for pos in position:
                 start = max(0, pos - window)
                 end = min(len(text), pos + window)
@@ -194,4 +195,46 @@ def concordance(word, master_index, window):
         return f"The word '{word}' does not exist in master_index: {e}"
 
 masterIndex = readAllFilesTokenizeAndIndexAll('Selma/', 'txt', r'\p{L}+')
-print(concordance('samlar', masterIndex, 25))
+concordance('samlar', masterIndex, 25)
+
+# Calculating TF-IDF
+
+"""Tf will be the relative frequency of the term in the document and
+idf, the logarithm base 10 of the inverse document frequency. """
+
+# Tf will be the relative frequency of the term in the document
+def tfCalculations(word, file):
+    text = open(file, 'r', encoding='utf-8').read().lower() 
+
+    index = [tokenize(text)]
+    frequencyOfTerm = index.count(word)
+    totalNbrWords = len(index)
+
+    result = frequencyOfTerm/totalNbrWords
+    if(result < 0.0):
+        return 0
+    else:
+        return result
+   
+# idf, the logarithm base 10 of the inverse document frequency.
+def idfCalculations(word, master_index):
+    # Vi måste iterera genom alla dokument
+    files = get_files('Selma/', 'txt')
+    N = 0
+    for file in files:
+        N += 1
+    # Addera alla våra files, dvs N
+
+    # Nu behöver vi räkna ankomsten av ordet d_T
+    d_t = len(master_index[word])
+
+    return math.log10(N/d_t)
+
+def calculating_id_tf(word, file, master_index):
+   idf = idfCalculations(word, master_index)
+   tf = tfCalculations(word, file)
+   return idf * tf
+
+master_Index = readAllFilesTokenizeAndIndexAll('Selma/', 'txt', 'samlar')
+
+# calculating_id_tf('samlar', file = 'Selma/marbacka.txt', master_Index)

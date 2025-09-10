@@ -29,7 +29,7 @@ You will use the pickle package to write your dictionary in an file, see https:/
 
 # Make the program so that it can open and read one document file: Finished
 
-text = open('Selma/bannlyst.txt').read()
+text = open('Lab 1/Selma/bannlyst.txt').read()
 
 # 1. Index file will contain unique words. Varje ord kommer ha en lista med positioner i dokumentet så som föreläsningen med index antar jag typ (11, 34).
 # Dictionary ska användas där nycklar kommer att vara ord och värdena ska vara positioner vilket gör att orden blir unika.
@@ -110,19 +110,19 @@ def read_file_and_tokenize_and_index_it(file, regex = r'\p{L}+'):
 
     return index
 
-text = read_file_and_tokenize_and_index_it('Selma/marbacka.txt')
+text = read_file_and_tokenize_and_index_it('Lab 1/Selma/marbacka.txt')
 # print(text)
 
 
 # Index "Mårbacka"
-textMårbacka = read_file_and_tokenize_and_index_it(file = 'Selma/marbacka.txt', regex = 'mårbacka')
+textMårbacka = read_file_and_tokenize_and_index_it(file = 'Lab 1/Selma/marbacka.txt', regex = 'mårbacka')
 # print(textMårbacka)
 # Stämmer med output på labben
 
 
 # Reading the content of a folder
 
-def get_files(dir = 'Selma/', suffix = 'txt'):
+def get_files(dir = 'Lab 1/Selma/', suffix = 'txt'):
     """
     Returns all the files in a folder ending with suffix
     :param dir:
@@ -194,7 +194,7 @@ def concordance(word, master_index, window):
     except Exception as e:
         return f"The word '{word}' does not exist in master_index: {e}"
 
-masterIndex = readAllFilesTokenizeAndIndexAll('Selma/', 'txt', r'\p{L}+')
+masterIndex = readAllFilesTokenizeAndIndexAll('Lab 1/Selma/', 'txt', r'\p{L}+')
 
 concordance('samlar', masterIndex, 25)
 
@@ -230,7 +230,7 @@ def tfCalculations(word, master_index, filename):
     
 # idf, the logarithm base 10 of the inverse document frequency.
 def idfCalculations(word, master_index):
-    total_docs = len(get_files('Selma/', 'txt'))
+    total_docs = len(get_files('Lab 1/Selma/', 'txt'))
         
     if word not in master_index:
         return 0  # ordet finns inte i något dokument
@@ -294,7 +294,7 @@ def calculating_id_tf(word, file, master_index):
 '''
 
 
-master_Indexx = readAllFilesTokenizeAndIndexAll('Selma/', 'txt', r'\p{L}+')
+master_Indexx = readAllFilesTokenizeAndIndexAll('Lab 1/Selma/', 'txt', r'\p{L}+')
 #print(master_Indexx.keys())
 
 
@@ -322,7 +322,7 @@ def id_if_forOneDocument(text, dir='Selma/', master_index):
 '''
 
 # Creating a method to calc idif for the all documents, inte klar än
-def idif_forAFewWordsEachDocument(master_index, dir='Selma/', listOfWords = ['gås', 'nils', 'känna', 'et']):
+def idif_forAFewWordsEachDocument(master_index, dir='Lab 1/Selma/', listOfWords = ['gås', 'nils', 'känna', 'et']):
     tfidf = {}  # Dictionary for all documents
 
     files = get_files(dir, 'txt')
@@ -353,7 +353,7 @@ def id_if_forEachDocument(master_index, dir='Selma/'):
 '''
 
 # Creating a method to calculate TF-IDF for all documents
-def id_if_forEachDocument(master_index, dir='Selma/'):
+def id_if_forEachDocument(master_index, dir='Lab 1/Selma/'):
     tfidf = {}
     files = get_files(dir, 'txt')
     all_words = list(master_index.keys())

@@ -335,53 +335,84 @@ def idif_forAFewWordsEachDocument(master_index, dir='Selma/', listOfWords = ['gÃ
             tfidf[file][word] = calculating_id_tf(word, master_index, text)
     return tfidf
 
-# print(idif_forAFewWordsEachDocument(master_Indexx))
+#print(idif_forAFewWordsEachDocument(master_Indexx))
 
 
-
-
-# Creating a method to calc idif for the all documents
+''' Old code, took too long eftersom den loopade
 def id_if_forEachDocument(master_index, dir='Selma/'):
     tfidf = {}  # Dictionary for all documents
 
     files = get_files(dir, 'txt')
-    all_words = master_index.keys()  # All unique words in corpus as each word is branded as a key while the position as value
+    all_words = list(master_index.keys())  # All unique words in corpus as each word is branded as a key while the position as value
 
     for file in files:
         tfidf[file] = {}
         for word in all_words:
-            text = os.path.join(dir, file)
-            tfidf[file][word] = calculating_id_tf(word, text, master_index)
+            tfidf[file][word] = calculating_id_tf(word, master_index, file)
+    return tfidf
+'''
+
+# Creating a method to calculate TF-IDF for all documents
+def id_if_forEachDocument(master_index, dir='Selma/'):
+    tfidf = {}
+    files = get_files(dir, 'txt')
+    all_words = list(master_index.keys())
+
+    # RÃ¤knar totala ord per dokument
+    total_words_per_file = {}
+    for file in files:
+        total_count = 0
+        for w in master_index:
+            if file in master_index[w]:
+                total_count += len(master_index[w][file])
+        total_words_per_file[file] = total_count
+
+    # Calculate TF-IDF
+    for file in files:
+        tfidf[file] = {}
+        for word in all_words:
+            # TF
+            tf = 0
+            if word in master_index and file in master_index[word]:
+                frequency = len(master_index[word][file])
+                total_words = total_words_per_file[file]
+                if total_words > 0:
+                    tf = frequency / total_words
+
+            # IDF
+            idf = 0
+            if word in master_index:
+                doc_count = len(files)
+                docs_with_word = len(master_index[word])
+                if docs_with_word > 0:
+                    idf = math.log10(doc_count / docs_with_word)
+
+            # TF-IDF
+            tfidf[file][word] = tf * idf
+
     return tfidf
 
-#print('idif for the whole dictionary for each file')
-#print(id_if_forEachDocument(master_Indexx))
+
+
+print('idif for the whole dictionary for each file')
+print(id_if_forEachDocument(master_Indexx))
 
 # Comparing Documents
     # Cosine similarity
 # According to lecture chapter 9 for the cosine is the dot product D1*D"/ Absolute value of D1 multiplied by absolut value of D2
 
 def cosine_similarity(document1, document2):
-    # Both documents should have the same key when comparing the cosine similarity
-    all_words = []
-    for word in document1:
-        for comparableWord in document2:
-            if word == comparableWord:
-                all_words.append(word)
-
     dot_product = 0
     D1 = 0
     D2 = 0
 
-    for word in all_words:
-        tfidf_Value_1 = document1.get(word, 0) # returns the value associated with the word, but if that word does not have a value, the default return value on that key is 0
-        tfidf_Value_2 = document2.get(word, 0)
+    for word in document1:
+        tfidf1 = document1[word]
+        tfidf2 = document2.get(word, 0)
+        dot_product += tfidf1 * tfidf2
+        D1 += tfidf1 ** 2
+        D2 += tfidf2 ** 2
 
-        dot_product += tfidf_Value_1 * tfidf_Value_2
-
-        D1 += tfidf_Value_1**2
-        D2 += tfidf_Value_2**2
-    
     D1 = math.sqrt(D1)
     D2 = math.sqrt(D2)
 
@@ -390,10 +421,10 @@ def cosine_similarity(document1, document2):
 
     return dot_product / (D1 * D2)
 
+
 def similarityMatrix():
     files = get_files()
-    #tfidf_forAllDocuments = id_if_forEachDocument(master_Indexx)
-    tfidf_forAllDocuments = idif_forAFewWordsEachDocument(master_Indexx)
+    tfidf_forAllDocuments = id_if_forEachDocument(master_Indexx)
 
     similarity_matrix = {}
     most_sim_doc1 = ""

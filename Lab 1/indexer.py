@@ -302,7 +302,7 @@ def id_if_forEachDocument(master_index, dir='Lab 1/Selma/'):
     for file in files:
         tfidf[file] = {}
         for word in all_words:
-            # TF
+            # TF, term freq: basically how often the term comes up in a document
             tf = 0
             if word in master_index and file in master_index[word]:
                 frequency = len(master_index[word][file])
@@ -310,7 +310,7 @@ def id_if_forEachDocument(master_index, dir='Lab 1/Selma/'):
                 if total_words > 0:
                     tf = frequency / total_words
 
-            # IDF
+            # IDF, inversion document freq: basically how unique a word is across all elements/documents
             idf = 0
             if word in master_index:
                 doc_count = len(files)
@@ -318,7 +318,8 @@ def id_if_forEachDocument(master_index, dir='Lab 1/Selma/'):
                 if docs_with_word > 0:
                     idf = math.log10(doc_count / docs_with_word)
 
-            # TF-IDF
+            # TF-IDF calculates how unique one element is in one document incomparison to its counterparts in other documents, for instance:
+            # 'the' has a low tf_idf score as it comes up very often in across all documents.
             tfidf[file][word] = tf * idf
 
     return tfidf

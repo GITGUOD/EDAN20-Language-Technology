@@ -195,6 +195,7 @@ def concordance(word, master_index, window):
         return f"The word '{word}' does not exist in master_index: {e}"
 
 masterIndex = readAllFilesTokenizeAndIndexAll('Selma/', 'txt', r'\p{L}+')
+
 concordance('samlar', masterIndex, 25)
 
 # Calculating TF-IDF
@@ -202,6 +203,57 @@ concordance('samlar', masterIndex, 25)
 """Tf will be the relative frequency of the term in the document and
 idf, the logarithm base 10 of the inverse document frequency. """
 
+# Tf will be the relative frequency of the term in the document
+def tfCalculations(word, master_index, filename):
+
+    word_count = []
+
+    frequencyOfTerm = 0
+    for w, positions in master_index.items():
+        if filename in positions:  # kolla att ordet finns i dokumentet
+            for _ in range(len(positions[filename])):
+                word_count.append(w)
+
+    frequencyOfTerm = word_count.count(word)
+    totalNbrWords = len(word_count)
+
+    if totalNbrWords == 0:   # Zero Division
+        return 0
+
+    result = frequencyOfTerm/totalNbrWords
+    if result <= 0.0 or frequencyOfTerm <= 0.0:
+        return 0
+    else:
+        return result
+
+
+    
+# idf, the logarithm base 10 of the inverse document frequency.
+def idfCalculations(word, master_index):
+    total_docs = len(get_files('Selma/', 'txt'))
+        
+    if word not in master_index:
+        return 0  # ordet finns inte i något dokument
+    
+    d_t = len(master_index[word])  # # antal dokument där ordet finns
+
+    if d_t == 0:
+        return 0
+    
+    return math.log10(total_docs / d_t)
+
+# According to the wikipedia page: Term frequency–inverse document frequency slide
+def calculating_id_tf(word, master_index, filename):
+    idf = idfCalculations(word, master_index)
+    tf = tfCalculations(word, master_index, filename)
+    return tf * idf
+print('iftf calc')
+print(calculating_id_tf('nils', masterIndex, 'jerusalem.txt'))
+
+# Fixat ovan!
+
+# Old code, took to long:
+'''
 # Tf will be the relative frequency of the term in the document
 def tfCalculations(word, file):
     # Öppna texten
@@ -219,7 +271,9 @@ def tfCalculations(word, file):
         return 0
     else:
         return result
-   
+'''
+
+'''
 # idf, the logarithm base 10 of the inverse document frequency.
 def idfCalculations(word, master_index):
     total_docs = len(get_files('Selma/', 'txt'))
@@ -228,27 +282,65 @@ def idfCalculations(word, master_index):
         return 0  # ordet finns inte i något dokument
     d_t = len(master_index[word])  # antal dokument där ordet finns
     return math.log10(total_docs / d_t)
+'''
 
+'''
 # According to the wikipedia page: Term frequency–inverse document frequency slide
 def calculating_id_tf(word, file, master_index):
     idf = idfCalculations(word, master_index)
     tf = tfCalculations(word, file)
     return tf * idf
 
+'''
+
 
 master_Indexx = readAllFilesTokenizeAndIndexAll('Selma/', 'txt', r'\p{L}+')
-
-result = calculating_id_tf(word='nils', file='Selma/marbacka.txt', master_index=master_Indexx)
-resul2 = calculating_id_tf(word='et', file='Selma/marbacka.txt', master_index=master_Indexx)
-resul3 = calculating_id_tf(word='nils', file='Selma/jerusalem.txt', master_index=master_Indexx)
+#print(master_Indexx.keys())
 
 
+result = calculating_id_tf(word='nils', master_index=master_Indexx, filename='marbacka.txt')
+resul2 = calculating_id_tf(word='et', master_index=master_Indexx, filename='marbacka.txt')
+resul3 = calculating_id_tf(word='nils', master_index=master_Indexx, filename='jerusalem.txt')
 
-print('idtf results:', result)
-print('idtf results:', resul2)
-print('correct, now to the jerusalem.txt', resul3)
 
-# Creating a method for the whole dictionary
+print('idtf results: nils', result)
+print('idtf results et:', resul2)
+print('correct, now to the jerusalem.txt, nils', resul3)
+
+
+# Creating a method for the one document, incompleted though
+'''
+def id_if_forOneDocument(text, dir='Selma/', master_index):
+    tfidf = {}  # Dictionary for all documents
+
+    all_words = text_to_idx(text).keys()  # All unique words in corpus as each word is branded as a key while the position as value
+
+    for word in all_words:
+        tfidf[word] = calculating_id_tf(word, text, master_index)
+
+    return tfidf
+'''
+
+# Creating a method to calc idif for the all documents, inte klar än
+def idif_forAFewWordsEachDocument(master_index, dir='Selma/', listOfWords = ['gås', 'nils', 'känna', 'et']):
+    tfidf = {}  # Dictionary for all documents
+
+    files = get_files(dir, 'txt')
+    #all_words = master_index.keys()  # All unique words in corpus as each word is branded as a key while the position as value
+
+    for file in files:
+        tfidf[file] = {}
+        for word in listOfWords:
+            text = os.path.join(dir, file)
+            tfidf[file][word] = calculating_id_tf(word, master_index, text)
+    return tfidf
+
+# print(idif_forAFewWordsEachDocument(master_Indexx))
+
+
+
+
+# Creating a method to calc idif for the all documents
 def id_if_forEachDocument(master_index, dir='Selma/'):
     tfidf = {}  # Dictionary for all documents
 
@@ -262,8 +354,8 @@ def id_if_forEachDocument(master_index, dir='Selma/'):
             tfidf[file][word] = calculating_id_tf(word, text, master_index)
     return tfidf
 
-print('idif for the whole dictionary for each file')
-print(id_if_forEachDocument(master_Indexx))
+#print('idif for the whole dictionary for each file')
+#print(id_if_forEachDocument(master_Indexx))
 
 # Comparing Documents
     # Cosine similarity
@@ -300,7 +392,9 @@ def cosine_similarity(document1, document2):
 
 def similarityMatrix():
     files = get_files()
-    tfidf_forAllDocuments = id_if_forEachDocument(master_Indexx)
+    #tfidf_forAllDocuments = id_if_forEachDocument(master_Indexx)
+    tfidf_forAllDocuments = idif_forAFewWordsEachDocument(master_Indexx)
+
     similarity_matrix = {}
     most_sim_doc1 = ""
     most_sim_doc2 = ""
@@ -323,6 +417,7 @@ def similarityMatrix():
     print("Most similar:", most_sim_doc1, most_sim_doc2, "Similarity:", max_similarity)
     return similarity_matrix, most_sim_doc1, most_sim_doc2, max_similarity
 
+similarityMatrix()
 
 
 

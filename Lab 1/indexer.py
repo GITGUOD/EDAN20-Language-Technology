@@ -1,15 +1,9 @@
 # Lab 1, we will create an indexer, index consists of rows with one word per row and
 # the list of files and positions where this words occur. Such a row is called a posting list.
-
-import bz2
 import math
 import os
 import pickle
 import regex as re
-import requests
-import sys
-import time
-from zipfile import ZipFile
 
 # We have downloaded Selmas file
 
@@ -252,47 +246,6 @@ print(calculating_id_tf('nils', masterIndex, 'jerusalem.txt'))
 
 # Fixat ovan!
 
-# Old code, took to long:
-'''
-# Tf will be the relative frequency of the term in the document
-def tfCalculations(word, file):
-    # Öppna texten
-    text = open(file, 'r', encoding='utf-8').read().lower() 
-    # Tokenisera texten
-    index = tokenize(text)
-    tokens = []
-    for match in index:
-        tokens.append(match.group())
-    frequencyOfTerm = tokens.count(word)
-    totalNbrWords = len(tokens)
-
-    result = frequencyOfTerm/totalNbrWords
-    if(result < 0.0):
-        return 0
-    else:
-        return result
-'''
-
-'''
-# idf, the logarithm base 10 of the inverse document frequency.
-def idfCalculations(word, master_index):
-    total_docs = len(get_files('Selma/', 'txt'))
-        
-    if word not in master_index:
-        return 0  # ordet finns inte i något dokument
-    d_t = len(master_index[word])  # antal dokument där ordet finns
-    return math.log10(total_docs / d_t)
-'''
-
-'''
-# According to the wikipedia page: Term frequency–inverse document frequency slide
-def calculating_id_tf(word, file, master_index):
-    idf = idfCalculations(word, master_index)
-    tf = tfCalculations(word, file)
-    return tf * idf
-
-'''
-
 
 master_Indexx = readAllFilesTokenizeAndIndexAll('Lab 1/Selma/', 'txt', r'\p{L}+')
 #print(master_Indexx.keys())
@@ -307,19 +260,6 @@ print('idtf results: nils', result)
 print('idtf results et:', resul2)
 print('correct, now to the jerusalem.txt, nils', resul3)
 
-
-# Creating a method for the one document, incompleted though
-'''
-def id_if_forOneDocument(text, dir='Selma/', master_index):
-    tfidf = {}  # Dictionary for all documents
-
-    all_words = text_to_idx(text).keys()  # All unique words in corpus as each word is branded as a key while the position as value
-
-    for word in all_words:
-        tfidf[word] = calculating_id_tf(word, text, master_index)
-
-    return tfidf
-'''
 
 # Creating a method to calc idif for the all documents, inte klar än
 def idif_forAFewWordsEachDocument(master_index, dir='Lab 1/Selma/', listOfWords = ['gås', 'nils', 'känna', 'et']):
@@ -338,19 +278,16 @@ def idif_forAFewWordsEachDocument(master_index, dir='Lab 1/Selma/', listOfWords 
 #print(idif_forAFewWordsEachDocument(master_Indexx))
 
 
-''' Old code, took too long eftersom den loopade
-def id_if_forEachDocument(master_index, dir='Selma/'):
-    tfidf = {}  # Dictionary for all documents
-
-    files = get_files(dir, 'txt')
-    all_words = list(master_index.keys())  # All unique words in corpus as each word is branded as a key while the position as value
-
+def count_words_per_file(master_index, files):
+    total_words_per_file = {}
     for file in files:
-        tfidf[file] = {}
-        for word in all_words:
-            tfidf[file][word] = calculating_id_tf(word, master_index, file)
-    return tfidf
-'''
+        total_count = 0
+        for w in master_index:
+            if file in master_index[w]:
+                total_count += len(master_index[w][file])
+        total_words_per_file[file] = total_count
+    return total_words_per_file
+
 
 # Creating a method to calculate TF-IDF for all documents
 def id_if_forEachDocument(master_index, dir='Lab 1/Selma/'):
@@ -359,13 +296,7 @@ def id_if_forEachDocument(master_index, dir='Lab 1/Selma/'):
     all_words = list(master_index.keys())
 
     # Räknar totala ord per dokument
-    total_words_per_file = {}
-    for file in files:
-        total_count = 0
-        for w in master_index:
-            if file in master_index[w]:
-                total_count += len(master_index[w][file])
-        total_words_per_file[file] = total_count
+    total_words_per_file = count_words_per_file(master_index, files)
 
     # Calculate TF-IDF
     for file in files:
@@ -400,6 +331,7 @@ print(id_if_forEachDocument(master_Indexx))
 # Comparing Documents
     # Cosine similarity
 # According to lecture chapter 9 for the cosine is the dot product D1*D"/ Absolute value of D1 multiplied by absolut value of D2
+# The theory is to calculate how similar both text are. The values are between 0 and 1.
 
 def cosine_similarity(document1, document2):
     dot_product = 0
@@ -421,7 +353,7 @@ def cosine_similarity(document1, document2):
 
     return dot_product / (D1 * D2)
 
-
+# Matrix over the most similar text based on the cosine similarity calculations
 def similarityMatrix():
     files = get_files()
     tfidf_forAllDocuments = id_if_forEachDocument(master_Indexx)

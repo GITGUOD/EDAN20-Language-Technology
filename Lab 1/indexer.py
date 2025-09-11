@@ -67,7 +67,7 @@ match = re.findall(regex, line)
 # Using regex, write tokenize(text) function to tokenize a text. Return their positions.
 
 def tokenize(text, regex = r'\p{L}+'):
-    match = re.finditer(regex, text)
+    match = re.finditer(regex, text) # search for all matches of a pattern in a string and return them as an iterator
     return match
 
 tokens = tokenize(line)
@@ -78,8 +78,8 @@ tokens = tokenize(line)
 def text_to_idx(text):
     newIndex = dict()
     for match in text:
-        word = match.group()
-        position = match.start()
+        word = match.group() # Returnerar strängar av matchen
+        position = match.start() # returnerar positionen
         if word not in newIndex:
             newIndex[word] = []
         newIndex[word].append(position)
@@ -259,23 +259,6 @@ resul3 = calculating_id_tf(word='nils', master_index=master_Indexx, filename='je
 print('idtf results: nils', result)
 print('idtf results et:', resul2)
 print('correct, now to the jerusalem.txt, nils', resul3)
-
-
-# Creating a method to calc idif for the all documents, inte klar än
-def idif_forAFewWordsEachDocument(master_index, dir='Lab 1/Selma/', listOfWords = ['gås', 'nils', 'känna', 'et']):
-    tfidf = {}  # Dictionary for all documents
-
-    files = get_files(dir, 'txt')
-    #all_words = master_index.keys()  # All unique words in corpus as each word is branded as a key while the position as value
-
-    for file in files:
-        tfidf[file] = {}
-        for word in listOfWords:
-            text = os.path.join(dir, file)
-            tfidf[file][word] = calculating_id_tf(word, master_index, text)
-    return tfidf
-
-#print(idif_forAFewWordsEachDocument(master_Indexx))
 
 
 def count_words_per_file(master_index, files):

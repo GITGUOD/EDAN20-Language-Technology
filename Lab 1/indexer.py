@@ -293,7 +293,7 @@ def id_if_forEachDocument(master_index, dir='Lab 1/Selma/'):
                 if total_words > 0:
                     tf = frequency / total_words
 
-            # IDF, inversion document freq: basically how unique a word is across all elements/documents
+            # IDF, inversion document freq: basically how unique a word is
             idf = 0
             if word in master_index:
                 doc_count = len(files)

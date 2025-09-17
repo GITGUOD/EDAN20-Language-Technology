@@ -100,7 +100,8 @@ def segment_sentences(text):
 
     sentence_boundaries = r"([.!?])(\s+)(\p{L})" # Om ordet slutar med .!?, har mellan slag efter och har ett stort bokstav efter så slutar meningen
 
-    sentence_markup = r"\1 </s>\n<s> \3"
+    sentence_markup = r"\1 </s>\n<s> \3" # ?(:)
+    # Så t.ex Hej mitt namn är Tonny. Så ersätter den punkten med ett <\s> först och efter meningen så är det <s> med substitutions metoden under
 
     text = re.sub(sentence_boundaries, sentence_markup, text) # Substituerar sentence_boundaries med <s> och <\s> på slutet
 
@@ -112,7 +113,7 @@ def segment_sentences(text):
 
     text = re.sub(Sduplicates, ' ', text)
 
-
+ 
     text = " <s> " + text + " </s> " # Sätter s i början och slutet av texten eftersom våran kod inte tar hänsyn i början och på slutet
 
     return text
@@ -245,6 +246,7 @@ print(perplexity_unigrams)
 print()
 # Bigrams
 print('bigram')
+#%%
 def bigram_lm(frequency, frequency_bigrams, sent_words):
 
     frequency_of_words = 0 #Number of words
@@ -276,7 +278,7 @@ def bigram_lm(frequency, frequency_bigrams, sent_words):
         else:
 
             prob = frequency.get(wi, 0) / sum(frequency.values())
-            backoff = f"*backoff: {prob}" # Ifall probability blir 0, och om vi har sett alla kombinationer
+            backoff = f"*<-- backoff:" # Om vi har sett alla kombinationer, finns inga bigrams, då måste vi använda unigrams istället
 
         sentenceP = sentenceP*prob
 

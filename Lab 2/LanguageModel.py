@@ -233,14 +233,34 @@ def unigram_lm(frequency, sent_words):
     return perplexity
 
 
+sentenceUn2 = '<s> nils är ett fint namn tycker jag </s>'
+sentenceUn3 = '<s> inte varje dag man träffar en nils </s>'
 sentence = 'det var en gång en katt som hette nils </s>'
 sent_words = sentence.split()
+sent_words2 = sentenceUn2.split()
+sent_words3 = sentenceUn3.split()
+
 print(sent_words)
+print(sent_words2)
+print(sent_words3)
+
 
 perplexity_unigrams = unigram_lm(frequency, sent_words)
+perplexity_unigrams2 = unigram_lm(frequency, sent_words2)
+perplexity_unigrams3 = unigram_lm(frequency, sent_words3)
+
 
 perplexity_unigrams = int(perplexity_unigrams)
+perplexity_unigrams2 = int(perplexity_unigrams2)
+
+perplexity_unigrams3 = int(perplexity_unigrams3)
+
 print(perplexity_unigrams)
+print('newline')
+print(perplexity_unigrams2)
+print('newline')
+print(perplexity_unigrams3)
+
 
 
 print()
@@ -299,15 +319,29 @@ def bigram_lm(frequency, frequency_bigrams, sent_words):
     return perplexity
 
 sentenceBi = '<s> det var en gång en katt som hette nils </s>'
-#sentenceBi2 = '<s> LU är en av Sveriges äldsta universitet </s>'
-#sentenceBi3 = '<s> Det är svårt och bestämma sig vilken maträtt man ska äta varje dag </s>'
+sentenceBi2 = '<s> nils är ett fint namn tycker jag </s>'
+sentenceBi3 = '<s> inte varje dag man träffar en nils </s>'
 
 sent_wordsBi = sentenceBi.split() # Det är för att bigrams behöver par, annars står ett ord utanför
+sent_wordsBi2 = sentenceBi2.split()
+sent_wordsBi3 = sentenceBi3.split()
 
 perplexity_bigrams = bigram_lm(frequency, frequency_bigrams, sent_wordsBi)
+perplexity_bigrams2 = bigram_lm(frequency, frequency_bigrams, sent_wordsBi2)
+perplexity_bigrams3 = bigram_lm(frequency, frequency_bigrams, sent_wordsBi3)
+
 
 perplexity_bigrams = int(perplexity_bigrams)
+perplexity_bigrams2 = int(perplexity_bigrams2)
+perplexity_bigrams3 = int(perplexity_bigrams3)
+
+
 print(perplexity_bigrams)
+print('newline')
+print(perplexity_bigrams2)
+print('newline')
+print(perplexity_bigrams3)
+
 
 # Trigrams
 print('Trigrams')

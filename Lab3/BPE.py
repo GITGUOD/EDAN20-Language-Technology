@@ -94,3 +94,94 @@ print(sp.encode('Selma Lagerlöf', out_type=str))
 print(sp.encode('123', out_type=str))
 
 print(sp.encode(corpus_raw, out_type=str))
+
+'''
+Read these two sections, important for assignment:
+
+Section 3.1 of Subword Regularization: Improving Neural Network Translation Models with Multiple Subword Candidates (https://arxiv.org/pdf/1804.10959.pdf) by Kudo (2018).
+Section 2, algorithm 1 of Byte Pair Encoding is Suboptimal for Language Model Pretraining (https://aclanthology.org/2020.findings-emnlp.414.pdf) by Bostrom and Durrett (2020).
+In your report, in a Method and program structure section, you will introduce your program with a summarization (10 to 15 lines or so) with your own words of the byte-pair encoding (BPE) algorithm as described by Kudo (2018)
+and Bostrom and Durrett (2020) (Only BPE and not the unigram language model so far).
+'''
+print()
+print('BPE programming')
+print()
+
+# BPE programming
+
+with open(FILE_PATH, encoding='utf8') as f:
+    corpus = f.read().strip()
+
+if not corpus.startswith('\u2581'):
+    corpus = '\u2581' + corpus
+
+corpus = re.sub(r'\s+', '\u2581', corpus)
+print(corpus[:100])
+
+# Initial Vocabulary
+
+#We create a second dictionary to count the subword tokens. At each iteration, the keys will store the subtokens.
+
+
+corpus_l = list(corpus)
+
+print(corpus_l)
+
+print(corpus_l[:15])
+
+print()
+#Extract the set of characters that will serve as initial subword tokens: Write a statement to extract the set of all the characters from corpus_l
+
+char_set = set(corpus_l)
+print(char_set)
+
+sortedSet = sorted(char_set)
+
+print()
+
+print(sortedSet)
+
+print(len(char_set))
+
+# Write your code here
+def initial_vocabulary(corpus_l):
+    return sorted(set(list(corpus_l)))
+
+print(initial_vocabulary(corpus_l))
+
+print()
+
+print('New assignment')
+# Counting
+
+# Write your code here
+def pair_count(corpus_l):
+    pairs = {}
+
+    for i in range(len(corpus_l)-1):
+        #hoppar över _
+        if corpus_l[i] != '\u2581' and corpus_l[i+1] == '\u2581':
+            continue
+
+        pair = corpus_l[i], corpus_l[i+1]
+        if pair in pairs:
+            pairs[pair] += 1
+        else:
+            pairs[pair] = 1
+ 
+    return pairs
+
+pairs = pair_count(corpus_l)
+
+print(Counter(pairs))
+
+most_freq_pair = Counter(pairs).most_common(1)[0] 
+pair_tuple, count = most_freq_pair
+
+print(pair_tuple)
+
+pair = ''.join(pair_tuple)
+print(pair)
+
+# The First Iteration
+

@@ -145,9 +145,9 @@ print(len(char_set))
 
 # Write your code here
 def initial_vocabulary(corpus_l):
-    return sorted(set(list(corpus_l)))
+    return set(list(corpus_l))
 
-print(initial_vocabulary(corpus_l))
+print(sorted(initial_vocabulary(corpus_l)))
 
 print()
 
@@ -159,11 +159,13 @@ def pair_count(corpus_l):
     pairs = {}
 
     for i in range(len(corpus_l)-1):
-        #hoppar över _
-        if corpus_l[i] != '\u2581' and corpus_l[i+1] == '\u2581':
+        first = corpus_l[i]
+        second = corpus_l[i+1]
+
+        if first != '\u2581' and second.startswith('\u2581'):
             continue
 
-        pair = corpus_l[i], corpus_l[i+1]
+        pair = first, second
         if pair in pairs:
             pairs[pair] += 1
         else:
@@ -185,3 +187,118 @@ print(pair)
 
 # The First Iteration
 
+vocabulary = initial_vocabulary(corpus_l)
+
+print(len(vocabulary))
+
+# Add your most frequent pair to the vocabulary after one iteration as well as the merge operation in the merge_ops list. merge_ops will contain the merge operations in the order you created them.
+
+merge_ops = []
+
+vocabulary.add(pair_tuple)
+
+merge_ops.append(pair_tuple)
+
+print(len(vocabulary))
+
+print(merge_ops)
+
+def merge_bigrams(corpus_l, pair):
+    first, second = pair
+    new_corpus = []
+    skip = False
+
+    for i in range(len(corpus_l)):
+        if skip == True:  # hoppa över om vi redan har mergat
+            skip = False
+            continue
+
+        # kolla om detta och nästa bildar paret
+        if i < len(corpus_l) - 1 and corpus_l[i] == first and corpus_l[i+1] == second:
+            new_corpus.append(first + second)
+            skip = True  # hoppa över nästa symbol
+        else:
+            new_corpus.append(corpus_l[i])
+
+    return new_corpus
+
+corpus_test = ['▁', 'D', 'e', '▁', 's', 'e', 'n', 'a', 's', 't']
+test = merge_bigrams(corpus_test, ('e', 'n'))
+print(test)
+
+print()
+
+print(merge_bigrams(merge_bigrams(corpus_test, ('e', 'n')), ('s', 'en')))
+
+# Byte Pair Encoding (BPE): Building the Vocabulary
+
+# Algorithm 1 following Bostrom and Durrett
+def BPE(corpus_l, k):
+    vocabulary = initial_vocabulary(corpus_l)
+    merge_ops = []
+    
+    for _ in range(k): 
+        
+        pairs = pair_count(corpus_l)
+        if not pairs:
+            break
+        
+        # Mest frekventa paret
+        most_freq_pair = Counter(pairs).most_common(1)[0][0]
+
+        # Merga två tecken
+        corpus_l = merge_bigrams(corpus_l, most_freq_pair)
+
+        # Lägg till nytt subword i vocabulary
+        new_symbol = ''.join(most_freq_pair)
+        vocabulary.add(new_symbol)
+
+        # Lägg till i merge_ops
+        merge_ops.append(most_freq_pair)
+
+    return vocabulary, merge_ops
+
+vocabulary, merge_ops = BPE(corpus_l, 50)
+print()
+print(merge_ops)
+print('text')
+merge_ops_text = ''
+for pair in merge_ops:
+    merge_ops_text += ''.join(pair) + ' '  # konvertera tuple till str och lägg till mellanslag
+print(merge_ops_text)
+
+
+print(len(vocabulary), len(merge_ops))
+
+print()
+
+print(vocabulary)
+
+def tokenize_bpe(corpus, merge_ops):
+    tokens = list(corpus)
+
+    for pair in merge_ops:
+        tokens = merge_bigrams(tokens, pair)
+
+    return tokens
+
+tokens_bpe = tokenize_bpe(corpus, merge_ops)
+print(tokens_bpe)
+
+tokens_sp = sp.encode(corpus_raw, out_type=str)
+print(tokens_sp)
+
+#
+print("Identical?")
+for i, (a, b) in enumerate(zip(tokens_sp, tokens_bpe)):
+    if a != b:
+        print(i, a, b)
+print("Yes")
+
+# Unigram Language Model
+
+spm.SentencePieceTrainer.train(
+    '--input=Lab3/Selma/herrgard.txt --model_prefix=Lab3/m --vocab_size=116 --user_defined_symbols=0,1,2,3,4,5,6,7,8,9')
+
+sp = spm.SentencePieceProcessor()
+print(sp.load('Lab3/m.model'))

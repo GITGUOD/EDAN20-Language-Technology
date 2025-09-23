@@ -302,3 +302,249 @@ spm.SentencePieceTrainer.train(
 
 sp = spm.SentencePieceProcessor()
 print(sp.load('Lab3/m.model'))
+
+print(sp.encode('senare', out_type=str))
+
+print(sp.encode('H', out_type=str))
+
+print(sp.encode('œ', out_type=str))
+
+print([sp.id_to_piece(i) for i in range(30)])
+
+# Unigram Probabilities
+
+def unigram_lm(frequency, sent_words):
+    #Frequency räknar antalet gånger ordet/unigrammet kommer fram i texten corpus
+
+    frequency_of_words = 0
+    for count in frequency.values():
+        frequency_of_words += count
+
+    """
+    Computing the sentence probs with a unigram model.
+    """
+
+    print('=====================================================')
+    print("wi \t C(wi) \t #words \t P(wi)")
+    print('=====================================================')
+
+    entropy = 0
+    sentenceP = 1.0
+    for wi in sent_words:
+        countingWord = frequency.get(wi, 0)
+        probabilityOfWord = countingWord/frequency_of_words # räknar sannolikheten av ett ord genom att ta det ordet och dela på antalet ord
+        sentenceP = sentenceP*probabilityOfWord
+        print(f"{wi}\t{countingWord}\t{frequency_of_words}\t{probabilityOfWord}")
+
+    #According to the chapter 10 lesson
+    # entroy = H(L) = 1/(-n) * log2(P(w1,...,Wn)) A measure of uncertainty or unpredictability in your language model. Räknar alltså osäkerheten
+    # Perplexity är 2^H(L), Exponential of the entropy. A standard way to measure how well your model predicts a sentence, större sannolikhet om perplexity är hög etc. Hur väl den gissar en mening
+    # geo_mean_prob = probabilities of all words in the sentence
+
+    n = len(sent_words)
+    entropy = - (1 / n) * math.log2(sentenceP)
+
+    perplexity = 2**entropy
+    geo_mean_prob = sentenceP**(1/len(sent_words))
+
+    print('=====================================================')
+    print("Prob. unigrams:\t", sentenceP)
+    print("Geometric mean prob.:", geo_mean_prob)
+    print("Entropy rate:\t", entropy)
+    print("Perplexity:\t", perplexity)
+
+    return perplexity
+
+def unigram_lm(tokenized_corpus):
+   unigram_probs = dict()
+
+   #Returnerar t.ex nåt sånt här {'▁': 3, 'a': 2, 'l': 2, 'S': 1, 'e': 1, 'm': 1, 'L': 1, 'g': 1, 'er': 1, 'ö': 1, 'f': 1}
+   count = Counter(tokenized_corpus)
+   lengthOfCorpus = len(tokenized_corpus)
+
+   for token, freqOfWord in count.items():
+    probability = freqOfWord/lengthOfCorpus
+    unigram_probs[token] = math.log(probability)   # naturlig log
+   
+   return unigram_probs
+
+tokenized_corpus = tokenize_bpe(corpus, merge_ops)
+a = tokenized_corpus[:15]
+
+print('ex')
+print(a)
+
+#print(corpus)
+
+unigram_logprobs = unigram_lm(tokenized_corpus)
+b = sorted(unigram_logprobs.items(), key=lambda x: -x[1])
+
+print(b)
+# Har inte tagit bort något än subtoken som det står..
+
+for token in vocabulary:
+    if token not in unigram_logprobs:
+        print(token)
+        unigram_logprobs[token] = -1000
+
+print(len(unigram_logprobs))
+
+# Unigram Tokenization
+
+import functools
+
+# Från labbinstruktionerna
+def tokenize_lm(char_seq, unigram_probs):
+    # Use one of the two cache functions below to have a faster answer:
+    # @functools.lru_cache(maxsize=2**10)
+    @functools.cache
+    # Available from Python 3.9
+    # The arguments of the cached function must be hashable that's why we define an inner cacheable function
+    def __tokenize_lm(char_seq):
+        if not char_seq:
+            return 0.0, []
+        splits = [(char_seq[:i], char_seq[i:])
+                  for i in range(1, len(char_seq) + 1)]
+        candidates = []
+        # print(splits)
+        for start, rest in splits:
+            if start in unigram_probs:  # Else the probability is 0 as well as the product.
+                start_prob = unigram_probs[start]
+            else:
+                start_prob = -1000
+            rest_prob, rest_list = __tokenize_lm(rest)
+            candidates.append(
+                (start_prob + rest_prob, [start] + rest_list))
+        # Uncomment the two next lines to see the recursion
+        # print('\tCands.', candidates)
+        # print('\t-> Max.:', max(candidates))
+        return max(candidates)
+    return __tokenize_lm(char_seq)
+
+
+c = tokenize_lm('▁senare', unigram_logprobs)
+print(c)
+
+d = tokenize_lm('▁H', unigram_logprobs)
+print(d)
+
+# Text Tokenization with Unigrams
+
+re_token = '▁[^▁]+'
+
+e = list(re.finditer(re_token, '▁kdlskdls▁ldösldös▁lödsldö'))
+print(e)
+
+# Write your code
+def tokenize_text_lm(corpus, unigram_probs):
+    tokenized_corpus = []
+    corpus_prob = 0.0
+    for word in re.finditer(re_token, corpus):
+        match = word.group()
+        word_prob, token = tokenize_lm(match, unigram_probs)
+        '''
+        append()
+            stoppar in hela listan som ett paket.
+
+            x = [0]
+            x.append([1, 2, 3])
+            print(x)   # [0, [1, 2, 3]]
+
+        extend()
+            tar ut alla saker i listan och lägger in dem en och en.
+            Lägger till varje element i den givna listan separat i listan.
+            
+            x = [0]
+            x.extend([1, 2, 3])
+            print(x)   # [0, 1, 2, 3]
+        '''
+        tokenized_corpus.extend(token)
+        corpus_prob += word_prob
+
+    return corpus_prob, tokenized_corpus
+
+init_loglikelihood, tokens = tokenize_text_lm(
+    corpus, unigram_logprobs)
+
+print(init_loglikelihood, tokens[:10])
+
+# Vocabulary Selection
+
+print(vocabulary)
+
+vocabulary_sorted = sorted(vocabulary, key=lambda w: -unigram_logprobs[w])
+print(vocabulary_sorted[:10])
+
+print(corpus_l[0:2])
+
+print(len(merge_ops))
+
+tokenized_corpus = tokenize_bpe(corpus, merge_ops)
+unigram_logprobs = unigram_lm(tokenized_corpus)
+print(unigram_logprobs)
+
+def tokenize_text_lm_2(corpus, unigram_logprobs):
+    tokenized_corpus = []
+    corpus_prob = 0.0
+    for word in re.finditer(re_token, corpus):
+        prob, tokens = tokenize_lm(word.group(), unigram_logprobs)
+        tokenized_corpus += tokens
+        corpus_prob += prob
+    return corpus_prob, tokenized_corpus
+
+unigram_logprobs_c = unigram_logprobs.copy()
+for i in tqdm.tqdm(range(5)):
+    init_loglikelihood, tokens = tokenize_text_lm_2(corpus, unigram_logprobs_c)
+    unigram_logprobs_c = unigram_lm(tokens)
+    print(init_loglikelihood)
+
+    print(len(unigram_logprobs_c))
+
+
+print(sorted(unigram_logprobs_c.items(), key=lambda x: -x[1]))
+
+print(tokenize_lm('▁senare', unigram_logprobs_c))
+
+
+print()
+
+logloss_word = []
+for i, word in enumerate(tqdm.tqdm(vocabulary_sorted)):
+    if len(word) == 1:
+        continue
+    # We store the word probability to be able restore it
+    prob_word = unigram_logprobs_c.pop(word)
+    loglikelihood, tokens = tokenize_text_lm_2(corpus, unigram_logprobs_c)
+    log_loss = loglikelihood - init_loglikelihood
+    logloss_word += [(log_loss, word)]
+    # we restore the probability
+    unigram_logprobs_c[word] = prob_word
+
+
+print(sorted(logloss_word, reverse=True))
+
+out_candidate = max(logloss_word, key=lambda x: x[0])[1]  # x[0] jämför logglossen och returnerar ordet [1] då den är lagrad som: t.ex (-9622.446649050573, '▁och')
+print()
+print("Our candidate",out_candidate)
+
+print("Tokenization without the subwords")
+# The tokenization without the subword
+
+print(vocabulary_sorted)
+
+vocabulary_sorted.remove(out_candidate)
+# print(vocabulary_sorted) # Efter att elementet/minsta har tagits bort
+
+unigram_probs_c = unigram_logprobs.copy()
+unigram_probs_c.pop(out_candidate)
+for i in range(5):
+    new_loglikelihood, tokens = tokenize_text_lm_2(corpus, unigram_probs_c)
+    unigram_probs_c = unigram_lm(tokens)
+    print(new_loglikelihood)
+
+print()
+print(init_loglikelihood) #  -494583.24282243924
+
+print(new_loglikelihood) # 494534.0921189297
+
+print(tokenize_text_lm(corpus, unigram_probs_c))

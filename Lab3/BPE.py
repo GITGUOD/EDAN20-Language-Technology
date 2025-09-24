@@ -9,7 +9,7 @@ import sentencepiece as spm
 
 
 # Dataset
-# Parameters for Selma dataset
+# Parameters for Selma dataset, från labben
 SELMA_URL = "https://github.com/pnugues/ilppp/raw/master/programs/corpus/Selma.zip"
 
 SELMA_FILES = [
@@ -76,7 +76,7 @@ print(corpus_raw[:100])
 
 #pip install sentencepiece
 
-#Train the model
+#Train the model, detta är vår BPE bibliotek då som heter Sentence Piece som basically ska funka som våran
 spm.SentencePieceTrainer.train('--input=Lab3/Selma/herrgard.txt --model_prefix=Lab3/m --vocab_size=116 --model_type=BPE --user_defined_symbols=0,1,2,3,4,5,6,7,8,9 ')
 
 sp = spm.SentencePieceProcessor()
@@ -108,7 +108,7 @@ print('BPE programming')
 print()
 
 # BPE programming
-
+# Implementerat egen
 with open(FILE_PATH, encoding='utf8') as f:
     corpus = f.read().strip()
 
@@ -154,7 +154,7 @@ print()
 print('New assignment')
 # Counting
 
-# Write your code here
+# Write your code here, min egna
 def pair_count(corpus_l):
     pairs = {}
 
@@ -162,9 +162,11 @@ def pair_count(corpus_l):
         first = corpus_l[i]
         second = corpus_l[i+1]
 
+        # Kollar om paret är olaglig, annars hoppar vi över iterationen till nästa för att inte ha med de i räkningen
         if first != '\u2581' and second.startswith('\u2581'):
             continue
 
+        # Lägger in de i pair listan och incrementa de
         pair = first, second
         if pair in pairs:
             pairs[pair] += 1
@@ -203,6 +205,7 @@ print(len(vocabulary))
 
 print(merge_ops)
 
+# Eget
 def merge_bigrams(corpus_l, pair):
     first, second = pair
     new_corpus = []
@@ -213,7 +216,7 @@ def merge_bigrams(corpus_l, pair):
             skip = False
             continue
 
-        # kolla om detta och nästa bildar paret
+        # Om det fortfarande går och loopa, kolla om detta och nästa bildar paret om det matchar vår par som vi vill räkna ihop
         if i < len(corpus_l) - 1 and corpus_l[i] == first and corpus_l[i+1] == second:
             new_corpus.append(first + second)
             skip = True  # hoppa över nästa symbol
@@ -232,7 +235,8 @@ print(merge_bigrams(merge_bigrams(corpus_test, ('e', 'n')), ('s', 'en')))
 
 # Byte Pair Encoding (BPE): Building the Vocabulary
 
-# Algorithm 1 following Bostrom and Durrett
+# Algorithm 1 following Bostrom and Durrett, våran BPE modell
+# BPE används för att slå ihop vokabulär, hämta de mest vanligaste sammansatta paret och lägga de i både merge_ops och vocabulary
 def BPE(corpus_l, k):
     vocabulary = initial_vocabulary(corpus_l)
     merge_ops = []
@@ -264,7 +268,7 @@ print(merge_ops)
 print('text')
 merge_ops_text = ''
 for pair in merge_ops:
-    merge_ops_text += ''.join(pair) + ' '  # konvertera tuple till str och lägg till mellanslag
+    merge_ops_text += ''.join(pair) + ' '  # konvertera tuple till str och lägg till mellanslag, basically gör om till text
 print(merge_ops_text)
 
 
@@ -274,6 +278,7 @@ print()
 
 print(vocabulary)
 
+# Tokenisera bpe, och sedan jämför vi med pythons sentencepiece
 def tokenize_bpe(corpus, merge_ops):
     tokens = list(corpus)
 
@@ -297,6 +302,8 @@ print("Yes")
 
 # Unigram Language Model
 
+# Pythons bibliotek där vi ska jämföra
+
 spm.SentencePieceTrainer.train(
     '--input=Lab3/Selma/herrgard.txt --model_prefix=Lab3/m --vocab_size=116 --user_defined_symbols=0,1,2,3,4,5,6,7,8,9')
 
@@ -313,48 +320,7 @@ print([sp.id_to_piece(i) for i in range(30)])
 
 # Unigram Probabilities
 
-def unigram_lm(frequency, sent_words):
-    #Frequency räknar antalet gånger ordet/unigrammet kommer fram i texten corpus
-
-    frequency_of_words = 0
-    for count in frequency.values():
-        frequency_of_words += count
-
-    """
-    Computing the sentence probs with a unigram model.
-    """
-
-    print('=====================================================')
-    print("wi \t C(wi) \t #words \t P(wi)")
-    print('=====================================================')
-
-    entropy = 0
-    sentenceP = 1.0
-    for wi in sent_words:
-        countingWord = frequency.get(wi, 0)
-        probabilityOfWord = countingWord/frequency_of_words # räknar sannolikheten av ett ord genom att ta det ordet och dela på antalet ord
-        sentenceP = sentenceP*probabilityOfWord
-        print(f"{wi}\t{countingWord}\t{frequency_of_words}\t{probabilityOfWord}")
-
-    #According to the chapter 10 lesson
-    # entroy = H(L) = 1/(-n) * log2(P(w1,...,Wn)) A measure of uncertainty or unpredictability in your language model. Räknar alltså osäkerheten
-    # Perplexity är 2^H(L), Exponential of the entropy. A standard way to measure how well your model predicts a sentence, större sannolikhet om perplexity är hög etc. Hur väl den gissar en mening
-    # geo_mean_prob = probabilities of all words in the sentence
-
-    n = len(sent_words)
-    entropy = - (1 / n) * math.log2(sentenceP)
-
-    perplexity = 2**entropy
-    geo_mean_prob = sentenceP**(1/len(sent_words))
-
-    print('=====================================================')
-    print("Prob. unigrams:\t", sentenceP)
-    print("Geometric mean prob.:", geo_mean_prob)
-    print("Entropy rate:\t", entropy)
-    print("Perplexity:\t", perplexity)
-
-    return perplexity
-
+# Funkar via att man räknar sannolikheten för alla möjliga subword och tar bort tokens gradvis efteråt via minimeringen av sannolikhetsförlust
 def unigram_lm(tokenized_corpus):
    unigram_probs = dict()
 
@@ -479,9 +445,12 @@ print(corpus_l[0:2])
 
 print(len(merge_ops))
 
+
 tokenized_corpus = tokenize_bpe(corpus, merge_ops)
 unigram_logprobs = unigram_lm(tokenized_corpus)
 print(unigram_logprobs)
+
+# Allt detta under är kopierade från instruktionerna
 
 def tokenize_text_lm_2(corpus, unigram_logprobs):
     tokenized_corpus = []
@@ -491,6 +460,7 @@ def tokenize_text_lm_2(corpus, unigram_logprobs):
         tokenized_corpus += tokens
         corpus_prob += prob
     return corpus_prob, tokenized_corpus
+
 
 unigram_logprobs_c = unigram_logprobs.copy()
 for i in tqdm.tqdm(range(5)):
@@ -522,7 +492,7 @@ for i, word in enumerate(tqdm.tqdm(vocabulary_sorted)):
 
 
 print(sorted(logloss_word, reverse=True))
-
+# Eget
 out_candidate = max(logloss_word, key=lambda x: x[0])[1]  # x[0] jämför logglossen och returnerar ordet [1] då den är lagrad som: t.ex (-9622.446649050573, '▁och')
 print()
 print("Our candidate",out_candidate)
@@ -535,6 +505,7 @@ print(vocabulary_sorted)
 vocabulary_sorted.remove(out_candidate)
 # print(vocabulary_sorted) # Efter att elementet/minsta har tagits bort
 
+# Labbens instruktioner
 unigram_probs_c = unigram_logprobs.copy()
 unigram_probs_c.pop(out_candidate)
 for i in range(5):

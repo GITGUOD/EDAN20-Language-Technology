@@ -103,6 +103,10 @@ Section 2, algorithm 1 of Byte Pair Encoding is Suboptimal for Language Model Pr
 In your report, in a Method and program structure section, you will introduce your program with a summarization (10 to 15 lines or so) with your own words of the byte-pair encoding (BPE) algorithm as described by Kudo (2018)
 and Bostrom and Durrett (2020) (Only BPE and not the unigram language model so far).
 '''
+
+# ------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Här börjar labben
+
 print()
 print('BPE programming')
 print()
@@ -112,9 +116,11 @@ print()
 with open(FILE_PATH, encoding='utf8') as f:
     corpus = f.read().strip()
 
+# Lägger till en sån _ i början av texten
 if not corpus.startswith('\u2581'):
     corpus = '\u2581' + corpus
 
+# Substituera varje space med en sån _
 corpus = re.sub(r'\s+', '\u2581', corpus)
 print(corpus[:100])
 
@@ -144,6 +150,7 @@ print(sortedSet)
 print(len(char_set))
 
 # Write your code here
+# Gör om till en set
 def initial_vocabulary(corpus_l):
     return set(list(corpus_l))
 
@@ -155,6 +162,8 @@ print('New assignment')
 # Counting
 
 # Write your code here, min egna
+# ------------------------------------------------------------------------
+
 def pair_count(corpus_l):
     pairs = {}
 
@@ -174,6 +183,9 @@ def pair_count(corpus_l):
             pairs[pair] = 1
  
     return pairs
+
+# ------------------------------------------------------------------------
+
 
 pairs = pair_count(corpus_l)
 
@@ -206,6 +218,8 @@ print(len(vocabulary))
 print(merge_ops)
 
 # Eget
+# ---------------------------------------------------------------------------------------
+
 def merge_bigrams(corpus_l, pair):
     first, second = pair
     new_corpus = []
@@ -225,6 +239,8 @@ def merge_bigrams(corpus_l, pair):
 
     return new_corpus
 
+# ------------------------------------------------------------------------------------------
+
 corpus_test = ['▁', 'D', 'e', '▁', 's', 'e', 'n', 'a', 's', 't']
 test = merge_bigrams(corpus_test, ('e', 'n'))
 print(test)
@@ -235,32 +251,41 @@ print(merge_bigrams(merge_bigrams(corpus_test, ('e', 'n')), ('s', 'en')))
 
 # Byte Pair Encoding (BPE): Building the Vocabulary
 
+# ---------------------------------------------------------------------------------
+
 # Algorithm 1 following Bostrom and Durrett, våran BPE modell
-# BPE används för att slå ihop vokabulär, hämta de mest vanligaste sammansatta paret och lägga de i både merge_ops och vocabulary
+# BPE används för att slå ihop vokabulär, hämta de mest vanligaste sammansatta paret, använder det och se om vi kan hitta fler subwords,
+# Sedan lägger vi de i både merge_ops och vocabulary
 def BPE(corpus_l, k):
     vocabulary = initial_vocabulary(corpus_l)
     merge_ops = []
     
     for _ in range(k): 
         
+        # Räknar antal par
         pairs = pair_count(corpus_l)
+
+        # Om vi inte har par så slutar modellen
         if not pairs:
             break
         
         # Mest frekventa paret
         most_freq_pair = Counter(pairs).most_common(1)[0][0]
 
-        # Merga två tecken
+        # Merga våra 2 vanligaste par och fortsätter så så att vi får med alla subwords eller vad man ska nu säga det
         corpus_l = merge_bigrams(corpus_l, most_freq_pair)
 
         # Lägg till nytt subword i vocabulary
         new_symbol = ''.join(most_freq_pair)
         vocabulary.add(new_symbol)
 
-        # Lägg till i merge_ops
+        # Lägg till i merge_ops efter att vi har mergat då vi vill hålla koll
         merge_ops.append(most_freq_pair)
 
     return vocabulary, merge_ops
+
+# ---------------------------------------------------------------------------------
+
 
 vocabulary, merge_ops = BPE(corpus_l, 50)
 print()
@@ -279,13 +304,20 @@ print()
 print(vocabulary)
 
 # Tokenisera bpe, och sedan jämför vi med pythons sentencepiece
+
+# ---------------------------------------------------------------------------------
+
 def tokenize_bpe(corpus, merge_ops):
+    # Hämtar våra tokens
     tokens = list(corpus)
-
+    # För varje par
     for pair in merge_ops:
-        tokens = merge_bigrams(tokens, pair)
-
+        tokens = merge_bigrams(tokens, pair) # See om vi kan få fler subwords
+    # Mergar våra par/tokens
     return tokens
+
+# ---------------------------------------------------------------------------------
+
 
 tokens_bpe = tokenize_bpe(corpus, merge_ops)
 print(tokens_bpe)
@@ -320,19 +352,27 @@ print([sp.id_to_piece(i) for i in range(30)])
 
 # Unigram Probabilities
 
-# Funkar via att man räknar sannolikheten för alla möjliga subword och tar bort tokens gradvis efteråt via minimeringen av sannolikhetsförlust
+# ---------------------------------------------------------------------------------
+
+
+# Funkar via att man räknar sannolikheten för alla möjliga subword/tokens och tar bort tokens gradvis efteråt via minimeringen av sannolikhetsförlust
 def unigram_lm(tokenized_corpus):
    unigram_probs = dict()
 
    #Returnerar t.ex nåt sånt här {'▁': 3, 'a': 2, 'l': 2, 'S': 1, 'e': 1, 'm': 1, 'L': 1, 'g': 1, 'er': 1, 'ö': 1, 'f': 1}
-   count = Counter(tokenized_corpus)
-   lengthOfCorpus = len(tokenized_corpus)
+   count = Counter(tokenized_corpus) # räknar alla våra tokens och hur många gånger de förekommer
 
-   for token, freqOfWord in count.items():
-    probability = freqOfWord/lengthOfCorpus
-    unigram_probs[token] = math.log(probability)   # naturlig log
+   lengthOfCorpus = len(tokenized_corpus) # Längden
+
+   for token, freqOfWord in count.items(): # För varje token och varje gång de tillkommer i våran count eller lista
+    probability = freqOfWord/lengthOfCorpus # Beräknar sannolikheten
+
+    unigram_probs[token] = math.log(probability)   # log sannolikheten av varje token
    
    return unigram_probs
+
+# ---------------------------------------------------------------------------------
+
 
 tokenized_corpus = tokenize_bpe(corpus, merge_ops)
 a = tokenized_corpus[:15]
@@ -402,12 +442,16 @@ e = list(re.finditer(re_token, '▁kdlskdls▁ldösldös▁lödsldö'))
 print(e)
 
 # Write your code
+
+# ---------------------------------------------------------------------------------
+
+# Denna beräknar sannolikheten av en corpus input av tokens/subtokens osv
 def tokenize_text_lm(corpus, unigram_probs):
     tokenized_corpus = []
     corpus_prob = 0.0
-    for word in re.finditer(re_token, corpus):
-        match = word.group()
-        word_prob, token = tokenize_lm(match, unigram_probs)
+    for word in re.finditer(re_token, corpus): # Returns an iterator with the condition of the regex, alltså ord _etc
+        match = word.group() #returnerar en sträng, här för varje ord
+        word_prob, token = tokenize_lm(match, unigram_probs) # Hämtar sannolikhet och ordet
         '''
         append()
             stoppar in hela listan som ett paket.
@@ -424,10 +468,13 @@ def tokenize_text_lm(corpus, unigram_probs):
             x.extend([1, 2, 3])
             print(x)   # [0, 1, 2, 3]
         '''
-        tokenized_corpus.extend(token)
-        corpus_prob += word_prob
+        tokenized_corpus.extend(token) # Lägger alla våra tokens i våran lista
+        corpus_prob += word_prob # Räknar sannolikheten
 
-    return corpus_prob, tokenized_corpus
+    return corpus_prob, tokenized_corpus # Returnerar sannolikheten och våran text
+
+# ---------------------------------------------------------------------------------
+
 
 init_loglikelihood, tokens = tokenize_text_lm(
     corpus, unigram_logprobs)

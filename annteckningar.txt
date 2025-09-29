@@ -1,0 +1,60 @@
+('1115', 'fra', "Lorsqu'il a demandé qui avait cassé la fenêtre, tous les garçons ont pris un air innocent.")
+('1276', 'eng', "Let's try something.")
+('1277', 'eng', 'I have to go to sleep.')
+('1279', 'fra', 'Je ne supporte pas ce type.')
+('1280', 'eng', "Today is June 18th and it is Muiriel's birthday!")
+('1441', 'fra', 'Pour une fois dans ma vie je fais un bon geste... Et ça ne sert à rien.')
+('337413', 'swe', 'Vi trodde att det var ett flygande tefat.')
+('341910', 'swe', 'Detta är huset jag bodde i när jag var barn.')
+('341938', 'swe', 'Vi hade roligt på stranden igår.')
+
+
+---------
+
+
+[[432,
+  168,
+  168,
+  437,
+  503,
+  503,
+  309,
+  170,
+  170,
+  86,
+  555,
+  555,
+  331,
+  593,
+  593,
+  97,
+  982,
+  982,
+  100,
+  735,
+  735,
+  32,
+  354,
+  354,
+  432,
+  168,
+  168,
+  332,
+  608,
+  608,
+  233,
+  159,
+  159,
+  310,
+  732,
+  732,
+  31,
+  855,
+  855,
+  442,
+  460,
+  460],
+
+
+
+  [[432, 437, 309, 86, 331, 97, 100, 32, 432, 332, 233, 310, 31, 442],

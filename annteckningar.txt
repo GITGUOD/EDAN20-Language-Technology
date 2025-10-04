@@ -60,3 +60,11 @@
   [[432, 437, 309, 86, 331, 97, 100, 32, 432, 332, 233, 310, 31, 442],
 
 
+
+Backward-pass (Backward())
+
+Du börjar bakifrån, vid loss-funktionen, och räknar ut derivatan (gradienten) med avseende på output.
+
+denna gradient skickas in bakåt genom varje lager som har parametrar, vikter, osv itererande (via kedjeregeln), jämför sedan med vår slutliga output vad som har ändrats
+
+Step används sedan för att optimera
